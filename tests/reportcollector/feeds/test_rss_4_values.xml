@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"
+    xmlns:content="http://purl.org/rss/1.0/modules/content/"
+    xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:atom="http://www.w3.org/2005/Atom"
+    xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+    xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+    >
+
+<channel>
+    <title>Test security intelligence: Test Security Blog</title>
+    <atom:link href="http://www.test.com/security/blog/feed/" rel="self" type="application/rss+xml" />
+    <link>http://www.test.com/security/blog</link>
+    <description>Test RSS Feed</description>
+    <lastBuildDate>Mon, 14 Jun 2021 16:18:11 +0000</lastBuildDate>
+    <language>en-US</language>
+    <sy:updatePeriod>
+    daily </sy:updatePeriod>
+    <sy:updateFrequency>
+    1   </sy:updateFrequency>
+    <generator>https://wordpress.org/?v=5.7.2</generator>
+    <item>
+        <title>Test title 1</title>
+        <link>http://www.test.com/security/blog/2021/06/14/test-title-1/</link>
+        <dc:creator>John Doe</dc:creator>
+        <pubDate>Mon, 14 Jun 2021 16:00:44 +0000</pubDate>
+        <category>Testing</category>
+        <guid isPermaLink="false">http://www.test.com/security/blog/?p=99999</guid>
+        <description><![CDATA[<p>This is a test blog report</p>]]></description>
+    </item>
+    <item>
+        <title>Test title 2</title>
+        <link>http://www.test.com/security/blog/2021/05/26/test-title-2/</link>
+        <dc:creator>Fred Doe</dc:creator>
+        <pubDate>Wed, 26 May 2021 21:36:17 +0000</pubDate>
+        <category>Testing</category>
+        <guid isPermaLink="false">http://www.test.com/security/blog/?p=99998</guid>
+        <description><![CDATA[<p>This is an earlier test report</p>]]></description>
+    </item>
+    <item>
+        <title>Test title 3</title>
+        <link>http://www.test.com/security/blog/2021/05/26/test-title-3/</link>
+        <dc:creator>Fred Doe</dc:creator>
+        <pubDate>Wed, 26 May 2021 21:36:17 +0000</pubDate>
+        <category>Testing</category>
+        <guid isPermaLink="false">http://www.test.com/security/blog/?p=99998</guid>
+        <description><![CDATA[<p>This is an earlier test report3</p>]]></description>
+    </item>
+    <item>
+        <title>Test title 4</title>
+        <link>http://www.test.com/security/blog/2021/05/26/test-title-4/</link>
+        <dc:creator>Fred Doe</dc:creator>
+        <pubDate>Wed, 26 May 2021 21:36:17 +0000</pubDate>
+        <category>Testing</category>
+        <guid isPermaLink="false">http://www.test.com/security/blog/?p=99998</guid>
+        <description><![CDATA[<p>This is an earlier test report4</p>]]></description>
+    </item>
+</channel>
+</rss>

@@ -1,0 +1,12 @@
+feeds:
+  - publisher: Microsoft
+    source: reporting
+    module: reportcollector.feeds.rss.RSSFeed
+    distribution: public
+    site: "https://www.microsoft.com/security/"
+    feed_url: "https://www.microsoft.com/en-us/security/blog/topic/threat-intelligence/feed/"
+  - publisher: Feedly
+    source: reporting
+    module: reportcollector.feeds.feedly.JsonFeedly
+    site: https://api.feedly.com
+    feed_url: https://api.feedly.com/v3/streams/contents

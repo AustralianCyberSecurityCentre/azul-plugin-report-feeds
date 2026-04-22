@@ -1,0 +1,43 @@
+<html>
+
+<head>
+	<title>My Awesome Report</title>
+	<!-- should ignore indicators outside of body text -->
+	<script src="http://www.test.com/static/1fefcca7cc5ce750e920acb6624f6e9f7613549924d87e4b01d20c97998a42f8"></script>
+</head>
+
+<body>
+	<h1>Bad Actor Does Bad Things</h1>
+	<p>
+		Bad Actor is at it again here are some indicators.
+	</p>
+	<h2>SHA256</h2>
+	<ul>
+		<li>c95ea4fc921c016fd056f96800d6c8e79167f5057b168c25a424a74ae2ca5170</li>
+		<li>df6987c7a5e621b8ff7c8049f895a8e511b51fefba6f8943c920cbcbb77a8377</li>
+		<!-- more likley to be blockchain related -->
+		<li>000000000000000000000049f895a8e511b51fefba6f8943c920cbcbb77a8377</li>
+	</ul>
+	<h2>MD5</h2>
+	<ul>
+		<li>4a57a635ea1fb4db0a57480d811bf8d7</li>
+		<!-- empty hashes should be ignored -->
+		<li>d41d8cd98f00b204e9800998ecf8427e</li>
+	</ul>
+	<h2>Compromised Sites</h2>
+	<ul>
+		<li>hxxps://dodgy.com/uploads/2134.aspx
+		<li>
+		<li>hxxps://dodgy.com/uploads/malware.exe
+		<li>
+		<li>https[:]//alternate.com/uploads/malware.exe
+		<li>
+	</ul>
+	<h2>C2 Domains</h2>
+	<ul>
+		<li>www[.]badguys[.].com</li>
+		<li>notneutered.asn</li>
+	</ul>
+
+	<body>
+		<html>

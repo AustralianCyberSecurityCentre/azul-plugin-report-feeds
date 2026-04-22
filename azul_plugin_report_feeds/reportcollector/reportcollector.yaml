@@ -1,0 +1,323 @@
+feeds:
+  - publisher: AT&T
+    source: reporting
+    module: reportcollector.feeds.rss.RSSFeed
+    distribution: public
+    site: "https://cybersecurity.att.com/alien-labs"
+    #feed_url: "https://cybersecurity.att.com/site/blog-all-rss"
+    # the following for just labs malware blogs
+    feed_url: "https://cybersecurity.att.com/site/blog-rss?blog=labs-research"
+
+  - publisher: Abuse.ch
+    source: reporting
+    module: reportcollector.feeds.rss.RSSFeed
+    distribution: public
+    site: "https://abuse.ch"
+    feed_url: "https://feeds.feedburner.com/Abusech"
+
+  - publisher: AhnLab
+    source: reporting
+    module: reportcollector.feeds.rss.RSSFeed
+    distribution: public
+    site: "https://asec.ahnlab.com/en/"
+    feed_url: "https://asec.ahnlab.com/en/feed/"
+    # also pdf reports at: https://global.ahnlab.com/site/securitycenter/html/techReport.do
+
+  - publisher: Avast
+    source: reporting
+    module: reportcollector.feeds.rss.RSSFeed
+    distribution: public
+    site: "https://decoded.avast.io/"
+    feed_url: "https://decoded.avast.io/feed/"
+
+  # Bought out by Blackberry still have blogs but no RSS
+  #- publisher: Cylance
+  #  source: reporting
+  #  module: reportcollector.feeds.rss.RSSFeed
+  #  distribution: public
+  #  site: "https://www.cylance.com"
+  #  feed_url: "https://www.cylance.com/content/dam/cylance/blog/rss.xml"
+
+  - publisher: BartBlaze
+    source: reporting
+    module: reportcollector.feeds.rss.RSSFeed
+    distribution: public
+    site: "https://bartblaze.blogspot.com"
+    feed_url: "https://bartblaze.blogspot.com/feeds/posts/default"
+
+  # FUTURE - Not currently working, gets 404 when looking for child pages.
+  # - publisher: BitDefender
+  #   source: reporting
+  #   module: reportcollector.feeds.bitdefender.BitDefenderFeed
+  #   distribution: public
+  #   site: "https://www.bitdefender.com/blog/labs"
+  #   feed_url: "https://www.bitdefender.com/blog/labs/tag/antimalware-research/"
+
+  - publisher: BlackLotusLabs
+    source: reporting
+    module: reportcollector.feeds.rss.RSSFeed
+    distribution: public
+    site: "https://blog.lumen.com/black-lotus-labs/"
+    feed_url: "https://blog.lumen.com/author/black-lotus-labs/feed/"
+    # FUTURE not following github links for iocs?
+
+  - publisher: CERT.pl
+    source: reporting
+    module: reportcollector.feeds.rss.RSSFeed
+    distribution: public
+    site: "https://www.cert.pl"
+    feed_url: "https://cert.pl/en/rss.xml"
+
+  - publisher: Checkpoint
+    source: reporting
+    module: reportcollector.feeds.rss.RSSFeed
+    distribution: public
+    site: "https://research.checkpoint.com"
+    feed_url: "https://research.checkpoint.com/feed/"
+
+  - publisher: CitizenLab
+    source: reporting
+    module: reportcollector.feeds.rss.RSSFeed
+    distribution: public
+    site: "https://citizenlab.ca"
+    feed_url: "https://citizenlab.ca/category/research/targeted-threats/feed/"
+
+  - publisher: ClearSky
+    source: reporting
+    module: reportcollector.feeds.rss.RSSContentFeed
+    distribution: public
+    site: "https://www.clearskysec.com"
+    feed_url: "https://www.clearskysec.com/feed/"
+
+  - publisher: CrySys
+    source: reporting
+    module: reportcollector.feeds.rss.RSSFeed
+    distribution: public
+    site: "https://www.crysys.hu"
+    feed_url: "https://blog.crysys.hu/category/malware/feed/"
+
+  - publisher: CyCraft
+    source: reporting
+    module: reportcollector.feeds.rss.RSSFeed
+    distribution: public
+    site: "https://cycraft.com"
+    feed_url: "https://medium.com/feed/cycraft/tagged/threat-intelligence"
+
+  - publisher: Cyren
+    source: reporting
+    module: reportcollector.feeds.rss.RSSFeed
+    distribution: public
+    site: "https://www.cyren.com"
+    feed_url: "https://feeds.feedburner.com/cyren/pnbj"
+
+  - publisher: Dell
+    source: reporting
+    module: reportcollector.feeds.rss.RSSFeed
+    distribution: public
+    site: "https://www.secureworks.com/"
+    feed_url: "https://www.secureworks.com/rss?feed=research&category=threat-analysis"
+
+  - publisher: ESET
+    source: reporting
+    module: reportcollector.feeds.rss.RSSFeed
+    distribution: public
+    site: "https://www.welivesecurity.com/"
+    feed_url: "https://www.welivesecurity.com/en/rss/feed/"
+
+  - publisher: Fortinet
+    source: reporting
+    module: reportcollector.feeds.rss.RSSFeed
+    distribution: public
+    site: "https://www.fortinet.com"
+    feed_url: "https://feeds.fortinet.com/fortinet/blog/threat-research"
+
+  - publisher: FoxIT
+    source: reporting
+    module: reportcollector.feeds.rss.RSSFeed
+    distribution: public
+    site: "https://fox-it.com/en/"
+    feed_url: "https://blog.fox-it.com/feed/"
+
+  - publisher: GData
+    source: reporting
+    module: reportcollector.feeds.rss.RSSFeed
+    distribution: public
+    site: "https://gdatasoftware.com"
+    feed_url: "https://feeds.feedblitz.com/GDataSecurityBlog-EN&x=1"
+
+  - publisher: NCSCGovCert
+    source: reporting
+    module: reportcollector.feeds.rss.RSSFeed
+    distribution: public
+    site: "https://www.govcert.admin.ch"
+    feed_url: "https://www.ncsc.gov.uk/api/1/services/v1/report-rss-feed.xml"
+
+  - publisher: IBM
+    source: reporting
+    module: reportcollector.feeds.rss.RSSFeed
+    distribution: public
+    site: "https://securityintelligence.com"
+    feed_url: "https://feeds.feedburner.com/SecurityIntelligence"
+
+  - publisher: Intezer
+    source: reporting
+    module: reportcollector.feeds.rss.RSSFeed
+    distribution: public
+    site: "https://www.intezer.com"
+    feed_url: "https://intezer.com/feed/"
+
+  - publisher: JPCERT
+    source: reporting
+    module: reportcollector.feeds.rss.RSSFeed
+    distribution: public
+    site: "https://blogs.jpcert.or.jp"
+    feed_url: "https://blogs.jpcert.or.jp/en/atom.xml"
+
+  - publisher: Kaspersky
+    source: reporting
+    module: reportcollector.feeds.rss.RSSFeed
+    distribution: public
+    site: "https://securelist.com/"
+    feed_url: "https://securelist.com/feed/"
+
+  # FUTURE - Not currently working, gets 404 when looking for child pages.
+  # - publisher: Lookout
+  #   source: reporting
+  #   module: reportcollector.feeds.lookout.LookoutBlog
+  #   distribution: public
+  #   site: "https://www.lookout.com"
+  #   feed_url: "https://blog.lookout.com/rest/search/advancedsearch?query=(_TYPE_:blogpost%20AND%20Locale:en-us)&locale=en-us&sorts={Date:false}"
+
+  - publisher: MalwareBreakdown
+    source: reporting
+    module: reportcollector.feeds.rss.RSSFeed
+    distribution: public
+    site: "https://malwarebreakdown.com"
+    feed_url: "https://malwarebreakdown.wordpress.com/feed/"
+
+  - publisher: MalwareBytes
+    source: reporting
+    module: reportcollector.feeds.rss.RSSFeed
+    distribution: public
+    site: "https://www.malwarebytes.com/"
+    feed_url: "https://www.malwarebytes.com/blog/feed/index.xml"
+
+  - publisher: McAfee
+    source: reporting
+    module: reportcollector.feeds.rss.RSSFeed
+    distribution: public
+    site: "https://www.mcafee.com"
+    feed_url: "https://www.mcafee.com/blogs/feed"
+
+  - publisher: Microsoft
+    source: reporting
+    module: reportcollector.feeds.rss.RSSFeed
+    distribution: public
+    site: "https://www.microsoft.com/security/"
+    feed_url: "https://www.microsoft.com/en-us/security/blog/topic/threat-intelligence/feed/"
+
+  - publisher: Morphisec
+    source: reporting
+    module: reportcollector.feeds.morphisec.MorphisecFeed
+    distribution: public
+    site: "https://www.morphisec.com"
+    feed_url: "https://blog.morphisec.com"
+    max_pages: 10
+
+  - publisher: NCCGroup
+    source: reporting
+    module: reportcollector.feeds.rss.RSSFeed
+    distribution: public
+    site: "https://research.nccgroup.com"
+    feed_url: "https://research.nccgroup.com/category/threat-intelligence/feed/"
+
+  - publisher: PaloAltoNetworks
+    source: reporting
+    module: reportcollector.feeds.paloalto.Unit42Feed
+    distribution: public
+    site: "https://unit42.paloaltonetworks.com/"
+    feed_url: "https://unit42.paloaltonetworks.com/wp-admin/admin-ajax.php?action=news_infinite&data%5Blang%5D=en&data%5Bsearch%5D=false&data%5Bcat%5D=false&data%5Bpopular%5D=false"
+    max_offset: 60
+
+  - publisher: PTSecurity
+    source: reporting
+    module: reportcollector.feeds.rss.RSSFeed
+    distribution: public
+    site: "https://www.ptsecurity.com/ww-en/"
+    feed_url: "https://www.ptsecurity.com/ww-en/rss/esc-threat/"
+    # Looks like feed only has last report published
+    # may need to write custom scraper if want to collect historical reports
+
+  - publisher: SentinelOne
+    source: reporting
+    module: reportcollector.feeds.rss.RSSFeed
+    distribution: public
+    site: "https://labs.sentinelone.com/"
+    feed_url: "https://www.sentinelone.com/labs/feed/"
+
+  - publisher: Sophos
+    source: reporting
+    module: reportcollector.feeds.rss.RSSFeed
+    distribution: public
+    site: "https://news.sophos.com/en-us/"
+    feed_url: "https://news.sophos.com/en-us/category/sophoslabs/sophoslabs-uncut/feed/"
+
+  - publisher: SpiderLabs
+    source: reporting
+    module: reportcollector.feeds.rss.RSSFeed
+    distribution: public
+    site: "https://www.trustwave.com"
+    feed_url: "https://www.trustwave.com/en-us/resources/blogs/spiderlabs-blog/rss.xml"
+
+  - publisher: Symantec
+    source: reporting
+    module: reportcollector.feeds.symantec.SymantecBlog
+    distribution: public
+    site: "https://symantec-enterprise-blogs.security.com"
+    feed_url: "https://symantec-enterprise-blogs.security.com/blogs/api/v1/blogs/search?aid=IOTVy1&blog=221&sort=created&sortDirection=desc"
+    rows: 5
+    max_pages: 10
+
+  - publisher: Talos
+    source: reporting
+    module: reportcollector.feeds.rss.RSSFeed
+    distribution: public
+    site: "https://www.talosintelligence.com"
+    feed_url: "https://feeds.feedburner.com/feedburner/Talos"
+
+  - publisher: TrendMicro
+    source: reporting
+    module: reportcollector.feeds.rss.RSSFeed
+    distribution: public
+    site: "https://www.trendmicro.com"
+    feed_url: "http://feeds.trendmicro.com/TrendMicroResearch"
+
+  - publisher: US-CERT
+    source: reporting
+    module: reportcollector.feeds.rss.RSSFeed
+    distribution: public
+    site: "https://www.us-cert.cisa.gov"
+    feed_url: "https://www.cisa.gov/cybersecurity-advisories/cybersecurity-advisories.xml"
+
+  - publisher: ZScaler
+    source: reporting
+    module: reportcollector.feeds.rss.RSSFeed
+    distribution: public
+    site: "https://www.zscaler.com"
+    feed_url: "https://www.zscaler.com/blogs/feeds"
+
+pdfconversion:
+  command: wkhtmltopdf
+  options:
+    - "--disable-javascript"
+    - "--disable-external-links"
+    - "--disable-internal-links"
+    - "--disable-forms"
+    - "--load-error-handling"
+    - "ignore"
+    - "--load-media-error-handling"
+    - "ignore"
+    - "--zoom"
+    - "0.85"
+    - "--image-dpi"
+    - "120"

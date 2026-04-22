@@ -1,0 +1,2194 @@
+<!DOCTYPE html>
+<html style="background-image: url(&quot;data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==&quot;);" lang="en-US"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width">
+	<link rel="profile" href="http://gmpg.org/xfn/11">
+	<link rel="stylesheet" href="test_microsoft_hashes_files/bootstrap.css">
+	<link rel="pingback" href="https://blogs.technet.microsoft.com/mmpc/xmlrpc.php">
+		<!--[if lt IE 9]>
+	<script src="https://blogs.technet.microsoft.com/mmpc/wp-content/themes/microsoft/js/html5.js"></script>
+	<![endif]-->
+	<title>New ransomware, old techniques: Petya adds worm capabilities – Windows Security blog</title>
+<link rel="dns-prefetch" href="https://ajax.aspnetcdn.com/">
+<link rel="dns-prefetch" href="https://s.w.org/">
+<link rel="alternate" type="application/rss+xml" title="Windows Security blog » New ransomware, old techniques: Petya adds worm capabilities Comments Feed" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/feed/">
+		<script id="facebook-jssdk" src="test_microsoft_hashes_files/sdk.js"></script><script async="" src="test_microsoft_hashes_files/gtm.js"></script><script async="" src="test_microsoft_hashes_files/analytics.js"></script><script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/2.2.1\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/2.2.1\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/blogs.technet.microsoft.com\/mmpc\/wp-includes\/js\/wp-emoji-release.min.js?ver=4.7.5"}};
+			!function(a,b,c){function d(a){var b,c,d,e,f=String.fromCharCode;if(!k||!k.fillText)return!1;switch(k.clearRect(0,0,j.width,j.height),k.textBaseline="top",k.font="600 32px Arial",a){case"flag":return k.fillText(f(55356,56826,55356,56819),0,0),!(j.toDataURL().length<3e3)&&(k.clearRect(0,0,j.width,j.height),k.fillText(f(55356,57331,65039,8205,55356,57096),0,0),b=j.toDataURL(),k.clearRect(0,0,j.width,j.height),k.fillText(f(55356,57331,55356,57096),0,0),c=j.toDataURL(),b!==c);case"emoji4":return k.fillText(f(55357,56425,55356,57341,8205,55357,56507),0,0),d=j.toDataURL(),k.clearRect(0,0,j.width,j.height),k.fillText(f(55357,56425,55356,57341,55357,56507),0,0),e=j.toDataURL(),d!==e}return!1}function e(a){var c=b.createElement("script");c.src=a,c.defer=c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var f,g,h,i,j=b.createElement("canvas"),k=j.getContext&&j.getContext("2d");for(i=Array("flag","emoji4"),c.supports={everything:!0,everythingExceptFlag:!0},h=0;h<i.length;h++)c.supports[i[h]]=d(i[h]),c.supports.everything=c.supports.everything&&c.supports[i[h]],"flag"!==i[h]&&(c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&c.supports[i[h]]);c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&!c.supports.flag,c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.everything||(g=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",g,!1),a.addEventListener("load",g,!1)):(a.attachEvent("onload",g),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),f=c.source||{},f.concatemoji?e(f.concatemoji):f.wpemoji&&f.twemoji&&(e(f.twemoji),e(f.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script><style>div[style="margin-top:0px; margin-bottom:10px"],
+[href^="http://download-performance.com/"],
+[href^="http://www.faceporn.net/free?"],
+[href^="http://www.linkbucks.com/referral/"]
+{display:none !important;}</style><style>iframe[src="https://c1.microsoft.com/c.gif?DI=4050&did=1&t="]
+{display:none !important;}</style><script src="test_microsoft_hashes_files/wp-emoji-release.js" type="text/javascript" defer="defer"></script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+<link rel="stylesheet" id="wds-ratings-css" href="test_microsoft_hashes_files/wds-ratings.css" type="text/css" media="all">
+<link rel="stylesheet" id="microsoft-parent-style-css" href="test_microsoft_hashes_files/style_003.css" type="text/css" media="all">
+<link rel="stylesheet" id="microsoft-child-style-css" href="test_microsoft_hashes_files/style.css" type="text/css" media="all">
+<script type="text/javascript" src="test_microsoft_hashes_files/jquery-1.js"></script>
+<script type="text/javascript" src="test_microsoft_hashes_files/bootstrap.js"></script>
+<script type="text/javascript" src="test_microsoft_hashes_files/single.js"></script>
+<link rel="https://api.w.org/" href="https://blogs.technet.microsoft.com/mmpc/wp-json/">
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://blogs.technet.microsoft.com/mmpc/xmlrpc.php?rsd">
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://blogs.technet.microsoft.com/mmpc/wp-includes/wlwmanifest.xml"> 
+
+<link rel="canonical" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/">
+<link rel="shortlink" href="https://blogs.technet.microsoft.com/mmpc/?p=13175">
+<link rel="alternate" type="application/json+oembed" href="https://blogs.technet.microsoft.com/mmpc/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fblogs.technet.microsoft.com%2Fmmpc%2F2017%2F06%2F27%2Fnew-ransomware-old-techniques-petya-adds-worm-capabilities%2F">
+<link rel="alternate" type="text/xml+oembed" href="https://blogs.technet.microsoft.com/mmpc/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fblogs.technet.microsoft.com%2Fmmpc%2F2017%2F06%2F27%2Fnew-ransomware-old-techniques-petya-adds-worm-capabilities%2F&amp;format=xml">
+	<script>
+		if(window.document.referrer.indexOf('login.live.com') !== -1) {
+			// redefine ga function to prevent referrer data collected by google analytics
+			window.ga = function(){};
+		}
+	</script>
+	<script type="text/javascript">
+jQuery( window ).load( function() {
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+    if (typeof mscc === 'undefined' || (!mscc || mscc.hasConsent())) {
+                ga('require', 'linkid');
+                ga('create', 'UA-65691138-1', 'auto');
+                ga('send', 'pageview');
+            }
+} );
+</script>
+<meta name="format-detection" content="telephone=no">			<!-- Begin Custom CSS --><style type="text/css" id="wds-custom-css">
+			.post-13965 blockquote {
+width:47%;
+float:right;
+border-left:0px;
+font-size: 1.1em;
+border-top:3px solid #000;
+border-bottom:3px solid #000;
+padding-top:15px;
+padding-bottom:15px;
+margin-top:12px;
+margin-bottom:12px;
+margin-left:30px;
+margin-right:30px;
+}
+
+.post-13965 blockquote p {
+text-align: center;
+border-left:0px;
+font-size: 1.1em;
+}
+
+body, html {
+font-family: 'Segoe UI','Lucida Grande',Verdana,Arial,Helvetica,sans-serif;
+background: white;
+color: #333;
+}
+
+h2, h3, h4 {
+font-family: 'Segoe UI','Lucida Grande',Verdana,Arial,Helvetica,sans-serif !important;
+}
+
+
+/*social sidebar links*/
+div#follow-us-links {
+	width:100%;
+	list-style: none;
+	list-style-type: none;
+	-webkit-padding-start: 0 !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	margin-left: -50px;
+}
+div#follow-us-links ul {
+	-webkit-padding-start: 0 !important;
+	margin: 0 !important;
+	padding: 0 !important;
+}
+
+div#follow-us-links ul li {
+	width:100%;
+	padding: 3px 0 3px 32px;
+	margin: .4em 0 1em 0;/*.4em 0*/
+	font-size: 120%;
+}
+
+div#follow-us-links ul li.blog-rss {
+list-style-type: none;
+background-image: url(https://msdnshared.blob.core.windows.net/media/TNBlogsFS/prod.evol.blogs.technet.com/CommunityServer.Blogs.Components.WeblogFiles/00/00/00/50/43/images/0020.icon-rss.png);
+background-repeat: no-repeat;
+background-position: 0 50%;
+}
+
+div#follow-us-links ul li.blog-rss {
+list-style-type: none;
+background-image: url(https://msdnshared.blob.core.windows.net/media/TNBlogsFS/prod.evol.blogs.technet.com/CommunityServer.Blogs.Components.WeblogFiles/00/00/00/50/43/images/0020.icon-rss.png);
+background-repeat: no-repeat;
+background-position: 0 50%;
+}
+
+div#follow-us-links ul li.facebook {
+    list-style-type: none;
+    background-image: url(https://msdnshared.blob.core.windows.net/media/TNBlogsFS/prod.evol.blogs.technet.com/CommunityServer.Blogs.Components.WeblogFiles/00/00/00/62/58/images/8737.icon-facebook.png);
+    background-repeat: no-repeat;
+    background-position: 0 50%;
+}
+div#follow-us-links ul li.twitter {
+list-style-type: none;
+background-image: url(https://msdnshared.blob.core.windows.net/media/TNBlogsFS/prod.evol.blogs.technet.com/CommunityServer.Blogs.Components.WeblogFiles/00/00/00/50/43/images/4705.icon-twitter.png);
+background-repeat: no-repeat;
+background-position: 0 50%;
+}
+div#follow-us-links ul li.linkedin {
+list-style-type: none;
+background-image: url(https://msdnshared.blob.core.windows.net/media/TNBlogsFS/prod.evol.blogs.technet.com/CommunityServer.Blogs.Components.WeblogFiles/00/00/00/50/43/images/1682.icon-linkedin.png);
+background-repeat: no-repeat;
+background-position: 0 50%;
+}
+div#follow-us-links ul li.email {
+list-style-type: none;
+background-image: url(https://msdnshared.blob.core.windows.net/media/TNBlogsFS/prod.evol.blogs.technet.com/CommunityServer.Blogs.Components.WeblogFiles/00/00/00/50/43/images/1121.icon-mail.jpg);
+background-repeat: no-repeat;
+background-position: 0 50%;
+}
+div#follow-us-links ul li.newsletter{
+list-style-type: none;
+background-image: url(https://msdnshared.blob.core.windows.net/media/TNBlogsFS/prod.evol.blogs.technet.com/CommunityServer.Blogs.Components.WeblogFiles/00/00/00/50/43/images/7624.icon-newsletter.jpg);
+background-repeat: no-repeat;
+background-position: 0 50%;
+}
+
+li.menu-hidden {
+    visibility: hidden;
+} 
+			</style><!-- End Custom CSS -->
+			    <link rel="shortcut icon" href="https://blogs.technet.microsoft.com/mmpc/wp-content/themes/microsoft-technet/images/favicon-technet.png">
+<meta property="og:type" content="article">
+<meta property="og:title" content="New ransomware, old techniques: Petya adds worm capabilities">
+<meta property="og:url" content="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/">
+<meta property="og:site_name" content="Windows Security">
+<meta property="og:description" content="(Note: We have published a follow-up blog entry on this ransomware attack.&nbsp;We have&nbsp;new findings from our continued investigation, as well as platform mitigation and protection information: Windows 10 platform resilience against the Petya ransomware attack.) &nbsp; On June 27, 2017 reports of a ransomware infection began spreading across Europe. We saw the first infections in...">
+<meta property="og:image" content="https://msdnshared.blob.core.windows.net/media/2017/06/129.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="New ransomware, old techniques: Petya adds worm capabilities">
+<meta name="twitter:url" content="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/">
+<meta name="twitter:description" content="(Note: We have published a follow-up blog entry on this ransomware attack.&nbsp;We have&nbsp;new findings from our continued investigation, as well as platform mitigation and protection information: Windows 10 platform resilience against the Petya ransomware attack.) &nbsp; On June 27, 2017 reports of a ransomware infection began spreading across Europe. We saw the first infections in...">
+<meta name="twitter:image" content="https://msdnshared.blob.core.windows.net/media/2017/06/129.png">
+<link href="test_microsoft_hashes_files/style_002.css" rel="stylesheet" type="text/css"><link href="test_microsoft_hashes_files/icons.css" rel="stylesheet" type="text/css"><link href="test_microsoft_hashes_files/UnifiedBaseballCard.css" rel="stylesheet" type="text/css"><link href="test_microsoft_hashes_files/usercard.css" rel="stylesheet" type="text/css"><script type="text/javascript" src="test_microsoft_hashes_files/jsll-4.js"></script><script async="" src="test_microsoft_hashes_files/t.js"></script><style type="text/css">.fb_hidden{position:absolute;top:-10000px;z-index:10001}.fb_reposition{overflow:hidden;position:relative}.fb_invisible{display:none}.fb_reset{background:none;border:0;border-spacing:0;color:#000;cursor:auto;direction:ltr;font-family:"lucida grande", tahoma, verdana, arial, sans-serif;font-size:11px;font-style:normal;font-variant:normal;font-weight:normal;letter-spacing:normal;line-height:1;margin:0;overflow:visible;padding:0;text-align:left;text-decoration:none;text-indent:0;text-shadow:none;text-transform:none;visibility:visible;white-space:normal;word-spacing:normal}.fb_reset>div{overflow:hidden}.fb_link img{border:none}@keyframes fb_transform{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}.fb_animate{animation:fb_transform .3s forwards}
+.fb_dialog{background:rgba(82, 82, 82, .7);position:absolute;top:-10000px;z-index:10001}.fb_reset .fb_dialog_legacy{overflow:visible}.fb_dialog_advanced{padding:10px;-moz-border-radius:8px;-webkit-border-radius:8px;border-radius:8px}.fb_dialog_content{background:#fff;color:#333}.fb_dialog_close_icon{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/yq/r/IE9JII6Z1Ys.png) no-repeat scroll 0 0 transparent;cursor:pointer;display:block;height:15px;position:absolute;right:18px;top:17px;width:15px}.fb_dialog_mobile .fb_dialog_close_icon{top:5px;left:5px;right:auto}.fb_dialog_padding{background-color:transparent;position:absolute;width:1px;z-index:-1}.fb_dialog_close_icon:hover{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/yq/r/IE9JII6Z1Ys.png) no-repeat scroll 0 -15px transparent}.fb_dialog_close_icon:active{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/yq/r/IE9JII6Z1Ys.png) no-repeat scroll 0 -30px transparent}.fb_dialog_loader{background-color:#f6f7f9;border:1px solid #606060;font-size:24px;padding:20px}.fb_dialog_top_left,.fb_dialog_top_right,.fb_dialog_bottom_left,.fb_dialog_bottom_right{height:10px;width:10px;overflow:hidden;position:absolute}.fb_dialog_top_left{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/ye/r/8YeTNIlTZjm.png) no-repeat 0 0;left:-10px;top:-10px}.fb_dialog_top_right{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/ye/r/8YeTNIlTZjm.png) no-repeat 0 -10px;right:-10px;top:-10px}.fb_dialog_bottom_left{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/ye/r/8YeTNIlTZjm.png) no-repeat 0 -20px;bottom:-10px;left:-10px}.fb_dialog_bottom_right{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/ye/r/8YeTNIlTZjm.png) no-repeat 0 -30px;right:-10px;bottom:-10px}.fb_dialog_vert_left,.fb_dialog_vert_right,.fb_dialog_horiz_top,.fb_dialog_horiz_bottom{position:absolute;background:#525252;filter:alpha(opacity=70);opacity:.7}.fb_dialog_vert_left,.fb_dialog_vert_right{width:10px;height:100%}.fb_dialog_vert_left{margin-left:-10px}.fb_dialog_vert_right{right:0;margin-right:-10px}.fb_dialog_horiz_top,.fb_dialog_horiz_bottom{width:100%;height:10px}.fb_dialog_horiz_top{margin-top:-10px}.fb_dialog_horiz_bottom{bottom:0;margin-bottom:-10px}.fb_dialog_iframe{line-height:0}.fb_dialog_content .dialog_title{background:#6d84b4;border:1px solid #365899;color:#fff;font-size:14px;font-weight:bold;margin:0}.fb_dialog_content .dialog_title>span{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/yd/r/Cou7n-nqK52.gif) no-repeat 5px 50%;float:left;padding:5px 0 7px 26px}body.fb_hidden{-webkit-transform:none;height:100%;margin:0;overflow:visible;position:absolute;top:-10000px;left:0;width:100%}.fb_dialog.fb_dialog_mobile.loading{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/ya/r/3rhSv5V8j3o.gif) white no-repeat 50% 50%;min-height:100%;min-width:100%;overflow:hidden;position:absolute;top:0;z-index:10001}.fb_dialog.fb_dialog_mobile.loading.centered{width:auto;height:auto;min-height:initial;min-width:initial;background:none}.fb_dialog.fb_dialog_mobile.loading.centered #fb_dialog_loader_spinner{width:100%}.fb_dialog.fb_dialog_mobile.loading.centered .fb_dialog_content{background:none}.loading.centered #fb_dialog_loader_close{color:#fff;display:block;padding-top:20px;clear:both;font-size:18px}#fb-root #fb_dialog_ipad_overlay{background:rgba(0, 0, 0, .45);position:absolute;bottom:0;left:0;right:0;top:0;width:100%;min-height:100%;z-index:10000}#fb-root #fb_dialog_ipad_overlay.hidden{display:none}.fb_dialog.fb_dialog_mobile.loading iframe{visibility:hidden}.fb_dialog_content .dialog_header{-webkit-box-shadow:white 0 1px 1px -1px inset;background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#738ABA), to(#2C4987));border-bottom:1px solid;border-color:#1d4088;color:#fff;font:14px Helvetica, sans-serif;font-weight:bold;text-overflow:ellipsis;text-shadow:rgba(0, 30, 84, .296875) 0 -1px 0;vertical-align:middle;white-space:nowrap}.fb_dialog_content .dialog_header table{-webkit-font-smoothing:subpixel-antialiased;height:43px;width:100%}.fb_dialog_content .dialog_header td.header_left{font-size:12px;padding-left:5px;vertical-align:middle;width:60px}.fb_dialog_content .dialog_header td.header_right{font-size:12px;padding-right:5px;vertical-align:middle;width:60px}.fb_dialog_content .touchable_button{background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#4966A6), color-stop(.5, #355492), to(#2A4887));border:1px solid #29487d;-webkit-background-clip:padding-box;-webkit-border-radius:3px;-webkit-box-shadow:rgba(0, 0, 0, .117188) 0 1px 1px inset, rgba(255, 255, 255, .167969) 0 1px 0;display:inline-block;margin-top:3px;max-width:85px;line-height:18px;padding:4px 12px;position:relative}.fb_dialog_content .dialog_header .touchable_button input{border:none;background:none;color:#fff;font:12px Helvetica, sans-serif;font-weight:bold;margin:2px -12px;padding:2px 6px 3px 6px;text-shadow:rgba(0, 30, 84, .296875) 0 -1px 0}.fb_dialog_content .dialog_header .header_center{color:#fff;font-size:16px;font-weight:bold;line-height:18px;text-align:center;vertical-align:middle}.fb_dialog_content .dialog_content{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/y9/r/jKEcVPZFk-2.gif) no-repeat 50% 50%;border:1px solid #555;border-bottom:0;border-top:0;height:150px}.fb_dialog_content .dialog_footer{background:#f6f7f9;border:1px solid #555;border-top-color:#ccc;height:40px}#fb_dialog_loader_close{float:left}.fb_dialog.fb_dialog_mobile .fb_dialog_close_button{text-shadow:rgba(0, 30, 84, .296875) 0 -1px 0}.fb_dialog.fb_dialog_mobile .fb_dialog_close_icon{visibility:hidden}#fb_dialog_loader_spinner{animation:rotateSpinner 1.2s linear infinite;background-color:transparent;background-image:url(https://static.xx.fbcdn.net/rsrc.php/v3/yD/r/t-wz8gw1xG1.png);background-repeat:no-repeat;background-position:50% 50%;height:24px;width:24px}@keyframes rotateSpinner{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+.fb_iframe_widget{display:inline-block;position:relative}.fb_iframe_widget span{display:inline-block;position:relative;text-align:justify}.fb_iframe_widget iframe{position:absolute}.fb_iframe_widget_fluid_desktop,.fb_iframe_widget_fluid_desktop span,.fb_iframe_widget_fluid_desktop iframe{max-width:100%}.fb_iframe_widget_fluid_desktop iframe{min-width:220px;position:relative}.fb_iframe_widget_lift{z-index:1}.fb_hide_iframes iframe{position:relative;left:-10000px}.fb_iframe_widget_loader{position:relative;display:inline-block}.fb_iframe_widget_fluid{display:inline}.fb_iframe_widget_fluid span{width:100%}.fb_iframe_widget_loader iframe{min-height:32px;z-index:2;zoom:1}.fb_iframe_widget_loader .FB_Loader{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/y9/r/jKEcVPZFk-2.gif) no-repeat;height:32px;width:32px;margin-left:-16px;position:absolute;left:50%;z-index:4}</style></head>
+
+<body class="post-template-default single single-post postid-13175 single-format-standard">
+<div id="page" class="site container-fluid">
+
+	<header id="site-header" class="site-header row" role="banner">
+		<div id="site-header-global-wrapper" class="site-header-global-wrapper">
+			<div id="site-header-global" class="site-header-global">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#site-profile-menu" aria-label="toggle menu" tabindex="0" aria-expanded="false">
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<div id="site-logo" class="col-sm-5 row navbar-header">
+					<div id="header-microsoft-logo">
+						<a id="home-link" href="http://technet.microsoft.com/" tabindex="1" aria-label="Microsoft Technet">
+							<img id="header-microsoft-logo-svg" src="test_microsoft_hashes_files/ms-logo-gray.svg" alt="Microsoft logo">
+							<span id="brand">
+								<span id="brand-separator">|</span>
+								<span id="brand-name"></span>
+							</span>
+						</a>
+					</div>
+				</div>
+				<div id="site-header-global-right" class="col-sm-7">
+					<div id="site-profile-menu" class="navbar-collapse collapse">
+						<div id="search-form-wrapper">
+														<form id="search-form" role="search" action="https://social.technet.microsoft.com/search/en-US" home-url="https://blogs.technet.microsoft.com/mmpc" autocomplete="off">
+								<div class="input-group">
+																			<input name="rq" value="site:blogs.technet.microsoft.com/mmpc" type="hidden">
+										<input name="rn" value="mmpc" type="hidden">
+																		<input name="ral" value="1" type="hidden">
+									<input class="form-control" placeholder="Search" name="query" id="srch-term" tabindex="0" aria-label="Search box with search options" type="text">
+									<div class="input-group-btn">
+										<button aria-label="Search" class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+									</div>
+								</div>
+							</form>
+							<div id="search-option">
+								<div class="search-filter" id="search-filter-site" tabindex="0" aria-label="Search TechNet">
+									<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+									<span class="search-text">Search TechNet</span>
+								</div>
+								<div class="search-filter" tabindex="0" aria-label="Search all blogs" id="search-filter-all-blogs">
+									<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+									<span class="search-text">Search all blogs</span>
+								</div>
+																	<div class="search-filter selected" tabindex="0" aria-label="Search this blog" id="search-filter-this-blog">
+										<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+										<span class="search-text">Search this blog</span>
+									</div>
+															</div>
+						</div>
+						<div id="me-control">
+															<a href="https://blogs.technet.microsoft.com/wp-login.php?aadsso_action=login">Sign in</a>
+													</div>
+					</div>
+				</div>
+
+			</div>
+
+		</div>
+		<div id="site-header-blog-wrapper" class="site-header-blog-wrapper ms-blog-header clear-both">
+			<div id="site-header-blog" class="site-header-blog">
+				<nav class="navbar navbar-inverse">
+					<div id="blog-logo-area" class="navbar-header">
+						<div id="blog-logo" data-toggle="collapse" data-target="#blog-menu" tabindex="0" aria-label="blog logo">
+														<div id="blog-logo-text">
+				<h1 class="site-title ms-blog-title">
+					<a href="https://blogs.technet.microsoft.com/mmpc" class="for-desktop">
+						Windows Security blog					</a>
+					<a href="#" class="for-mobile">
+						Windows Security blog					</a>
+				</h1>
+				<p class="site-description ms-blog-description">Security information, news, intelligence, and next-gen security technologies from Microsoft</p>
+			</div>
+											<span class="caret for-mobile"></span>
+													</div>
+					</div>
+					<div id="blog-menu" class="collapse navbar-collapse"><ul id="menu-main-menu" class="nav navbar-nav ms-blog-menu"><li id="menu-item-7335" class="menu-item menu-item-type-taxonomy menu-item-object-category current-post-ancestor current-menu-parent current-post-parent menu-item-7335"><a title="Research" href="https://blogs.technet.microsoft.com/mmpc/category/research/">Research</a></li>
+<li id="menu-item-7345" class="menu-item menu-item-type-taxonomy menu-item-object-category current-post-ancestor current-menu-parent current-post-parent menu-item-7345"><a title="Technologies" href="https://blogs.technet.microsoft.com/mmpc/category/technologies/">Technologies</a></li>
+<li id="menu-item-7355" class="menu-item menu-item-type-taxonomy menu-item-object-category current-post-ancestor current-menu-parent current-post-parent menu-item-7355"><a title="Tips" href="https://blogs.technet.microsoft.com/mmpc/category/tips/">Tips</a></li>
+<li id="menu-item-12356" class="menu-hidden menu-item menu-item-type-custom menu-item-object-custom menu-item-12356"><a title="-----------------------------------------------------" href="http:///#">—————————————————–</a></li>
+<li id="menu-item-11175" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-11175"><a title="Visit the Windows Defender Security Intelligence website" target="_blank" href="https://www.microsoft.com/en-us/wdsi">Visit the Windows Defender Security Intelligence website</a></li>
+</ul></div>				</nav>
+			</div>
+		</div>
+		<div id="site-header-image-wrapper" class="ms-blog-banner">
+			<div id="site-header-image">
+											</div>
+		</div>
+	</header>
+
+	<div id="site-content" class="site-content row">
+
+	<div id="primary" class="content-area col-sm-9">
+		<div id="single-content" class="div-content">
+
+			
+				
+<article id="post-13175" class="post-13175 post type-post status-publish format-standard hentry category-exploits category-ransomware category-windows-10 category-creators-update category-windows-defender-atp category-windows-defender category-research category-technologies category-worms tag-eternalblue tag-eternalromance tag-exploits tag-ms17-010 tag-petya tag-ransomware tag-ransomware-outbreak tag-software-supply-chain tag-wannaccrypt tag-windows-defender-atp tag-worm tag-worm-like-ransomware">
+
+	<header class="entry-header single">
+		<h1 class="entry-title">New ransomware, old techniques: Petya adds worm capabilities</h1>		<div class="rating-wrap">
+		<div id="star-rating-13175" class="wds-ratings" data-rating="4" data-userrating="0" data-postid="13175" data-container="body" data-toggle="tooltip" title="12 user(s) rated">
+			<div class="wds-ratings-inner-wrap">
+				<div>
+					<div aria-label="Select 5 star, this article is 4 star rated" tabindex="0" class="wds-ratings-stars wds-ratings-stars-enable-editing" data-stars="5"><span aria-hidden="true" class="star-1"><span>★</span></span><span aria-hidden="true" class="star-2"><span>★</span></span><span aria-hidden="true" class="star-3"><span>★</span></span><span aria-hidden="true" class="star-4"><span>★</span></span><span aria-hidden="true" class="star-5"><span>★</span></span></div><div aria-label="Select 4 star, this article is 4 star rated" tabindex="0" class="wds-ratings-stars wds-ratings-stars-enable-editing current-rating" data-stars="4"><span aria-hidden="true" class="star-1"><span>★</span></span><span aria-hidden="true" class="star-2"><span>★</span></span><span aria-hidden="true" class="star-3"><span>★</span></span><span aria-hidden="true" class="star-4"><span>★</span></span></div><div aria-label="Select 3 star, this article is 4 star rated" tabindex="0" class="wds-ratings-stars wds-ratings-stars-enable-editing current-rating" data-stars="3"><span aria-hidden="true" class="star-1"><span>★</span></span><span aria-hidden="true" class="star-2"><span>★</span></span><span aria-hidden="true" class="star-3"><span>★</span></span></div><div aria-label="Select 2 star, this article is 4 star rated" tabindex="0" class="wds-ratings-stars wds-ratings-stars-enable-editing current-rating" data-stars="2"><span aria-hidden="true" class="star-1"><span>★</span></span><span aria-hidden="true" class="star-2"><span>★</span></span></div><div aria-label="Select 1 star, this article is 4 star rated" tabindex="0" class="wds-ratings-stars wds-ratings-stars-enable-editing current-rating" data-stars="1"><span aria-hidden="true" class="star-1"><span>★</span></span></div>
+				</div>
+			</div>
+		</div>
+		</div>		<div class="clear-both"></div>
+		<div class="entry-meta">
+			<img alt="avatar of msft-mmpc" src="test_microsoft_hashes_files/avatar_004.jpg" class="avatar avatar-22 photo" width="22" height="22"><span class="byline"><span class="author vcard"><a class="url fn n profile-usercard-hover" data-profile-userid="5db956c4f3cf47f69de63fd184371bf8" href="https://social.technet.microsoft.com/profile/msft-mmpc" data-profile-rendered="true">msft-mmpc<div class="profile-usercard">            <div class="profile-header">                <span class="profile-userimage">                                            <img src="data:image/jpg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAAsACwDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwBsOi3F3Y6abaFnub24miRR3CiPn2A3Nk9sGnaeIrfxbp6WjLKsN5EquzYWQhxls44UnpxwMda615dQtvCq6fZaFqH2iG3SGKZrR96mXc1wR8vTIVR0POcmuMbw9rSKWfSL5EAyzPbuqqPUkjAHvXhzhy25UfodGv7ZTVRpLVLXe/X7rL1uet6Q3iHX447zUJo9PsJFDRwWpBkmUjOS/JUH/Zwfp1qTxx5UXhSTzXdI0liJbyxMeGHVWIDfieai8L6nYaX4dtLPUNf0ySeJccXSHaM8LndzjpxxwB2zUXj25gvPAtzPazRzwl0xJEwZT84HUe9ek2vYt31sfKRjL69BWtFSSVlZb+e/zucxqWnaFdaT9t0zTItSCJvuZrG5a3kjOSCTAwbavfj07AVwcxhaUmBHSPsruGI/EAfyqbT4r+S7U6bHcvcxjeptlYuvv8vI61ek0nW70rcf2HdNvUHfHaOA/oeBjp3HXr15ry5v2mqR9hQgsM3Gc7+r1+69vut6HutnfR3b3MQGya2lMckZPK91P0ZSGH1x1Bq1XmN74y06DxZHq2l3QaGS3Md3DKHQSlfudEPPPXHRSOM8v8O/Ee7vvEKW2oQxi3unWKFYl5iYnA57g55/yK9RYqnflbPjp5PieT2kY6Wvro/Nf108zj/Fui/2D4iuLVFxbufNg/3D0HU9DlefTNdP8L9QMkt9os8Xm2syGUApuUH7rBuOjDHU4+XHeut8a+Fz4k0+EW5VbyGQbGbptJAYH2HXv93Helh/sHwBpEMM0wjMpwX2kyTMBycDnA/IZHrzhHDunWc72j/Wh6VXM44rARo2cqj0st7rr/XmSQ+B/D1vaXEEenp+/VlMj/O6Zz90tnbjPBHoM5pfDcraZpX9l6hNmexkMAdhxInDIR7bWA9sEVV/4WN4b/5+5f8Avw3+FSPrfh/U5XkfTJ7x4mMLP/Zry7SOq52npnp710KVJO8Gjy5U8ZKLjiIyaeuqd7/P+tjx/T7ayvmFvNciznY4SWTmInsG7r/vcj2HWtHT9Hv9I8W6Ol7btGHvITHIOUkG9TlWHB6jp61RstevrHAT7PKo6rPbpJn8SM9/WvQLCc69o9hq8yC2mt9St4RDasyQsvmR4yhJHG48+w9K86lTjJXW6PqsZiatGfI/hldf1ov1PRK8m+Jenq+tfbIbxJGW3BmgMuWiwyqMDsDvBx/vHvXoWrzXD3tnp8NxJbrcrIXliA3jaUGASCB949s9Olct4z8N6TpPhG8ntbRftDSoWnkJeQksM/M2SM98V34r34OPbU+ayh+wrwqN/E7JfPr/AMA4bwrHbQ376tf/APHppy+dt5/eS/8ALNBjuSM+mFOeK1vE3iC6sb21h0yeS1U2kcs6QyMimV8uxwD33Drz+lclJO5tIbfgRqS+AOrE4yfwAH4e5y6/mknvpXkbLA7AfZRtH6AV5iqOMOVH10sKqlf2s9Vrp0/rf8Ox/9k=" alt="Avatar of msft-mmpc">                                    </span>                <div>                    <p title="msft-mmpc" class="profile-display-name" aria-label="msft-mmpc" tabindex="0">msft-mmpc</p>                                }                    <p class="profile-affiliations" aria-label="MSFT" tabindex="0">MSFT</p>                                </div>            </div>            <div class="profile-points-bar">                <span class="profile-points" aria-label="81,084 points" tabindex="0">81,084<span class="points-label"> Points</span></span>                <span class="profile-count profile-bronze-points"><span class="profile-bronze-img" title="Achievements Earned" aria-label="4 bronze medal" tabindex="0"></span><span>4</span></span>                <span class="profile-count profile-silver-points"><span class="profile-silver-img" title="Achievements Earned" aria-label="3 silver medal" tabindex="0"></span><span>3</span></span>                <span class="profile-count profile-gold-points"><span class="profile-gold-img" title="Achievements Earned" aria-label="2 gold medal" tabindex="0"></span><span>2</span></span>                        </div>            <div class="profile-achievements-header">                <span class="profile-achievements-title">Recent Achievements</span>            </div>            <div class="profile-achievements-recent">                <div class="profile-achievements-centering">                                                                <span class="profile-achievement profile-achievement-Bronze" aria-label="First Forums Reply" tabindex="0"><span>First Forums Reply</span></span>                                            <span class="profile-achievement profile-achievement-Gold" aria-label="Blog Party Starter" tabindex="0"><span>Blog Party Starter</span></span>                                            <span class="profile-achievement profile-achievement-Silver" aria-label="Blog Conversation Starter" tabindex="0"><span>Blog Conversation Starter</span></span>                                                            </div>            </div>            <div class="profile-footer">                                <a href="https://social.msdn.microsoft.com/profile/msft-mmpc/?ws=usercard-hover" class="profile-usercard-profileLink" target="_blank">View Profile</a>            </div>        </div></a></span></span><span class="posted-on posted-on-margin"><span class="screen-reader-text"></span><time class="entry-date published updated" datetime="2017-06-27T23:57:43+00:00">June 27, 2017</time></span><span class="comments-link"><span class="glyphicon glyphicon-comment" aria-hidden="true"></span><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comments" aria-label="70 comments" title="70 comments">70</a></span>				<span class="social-icons-wrap">
+		<ul class="social-icons">
+			<li><div class="fb-share-button fb_iframe_widget" data-href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/" data-layout="button_count" data-size="large" data-mobile-iframe="true" fb-xfbml-state="rendered" fb-iframe-plugin-query="app_id=&amp;container_width=78&amp;href=https%3A%2F%2Fblogs.technet.microsoft.com%2Fmmpc%2F2017%2F06%2F27%2Fnew-ransomware-old-techniques-petya-adds-worm-capabilities%2F&amp;layout=button_count&amp;locale=en_GB&amp;mobile_iframe=true&amp;sdk=joey&amp;size=large"><span style="vertical-align: top; width: 0px; height: 0px; overflow: hidden;"><iframe name="f3f7982eab279da" allowtransparency="true" allowfullscreen="true" scrolling="no" title="fb:share_button Facebook Social Plugin" style="border: medium none; visibility: visible; width: 0px; height: 0px;" src="https://www.facebook.com/v2.8/plugins/share_button.php?app_id=&amp;channel=https%3A%2F%2Fstaticxx.facebook.com%2Fconnect%2Fxd_arbiter%2Fr%2F5oivrH7Newv.js%3Fversion%3D42%23cb%3Df687a10b30f5d%26domain%3Dblogs.technet.microsoft.com%26origin%3Dhttps%253A%252F%252Fblogs.technet.microsoft.com%252Ff32131200da692c%26relation%3Dparent.parent&amp;container_width=78&amp;href=https%3A%2F%2Fblogs.technet.microsoft.com%2Fmmpc%2F2017%2F06%2F27%2Fnew-ransomware-old-techniques-petya-adds-worm-capabilities%2F&amp;layout=button_count&amp;locale=en_GB&amp;mobile_iframe=true&amp;sdk=joey&amp;size=large" width="1000px" height="1000px" frameborder="0"></iframe></span></div></li>
+			<div id="fb-root" style="display:none" class=" fb_reset"><div style="position: absolute; top: -10000px; height: 0px; width: 0px;"><div></div></div><div style="position: absolute; top: -10000px; height: 0px; width: 0px;"><div><iframe name="fb_xdm_frame_https" allowtransparency="true" allowfullscreen="true" scrolling="no" id="fb_xdm_frame_https" aria-hidden="true" title="Facebook Cross Domain Communication Frame" tabindex="-1" style="border: medium none;" src="test_microsoft_hashes_files/5oivrH7Newv.html" frameborder="0"></iframe></div></div></div>
+
+			<li class="social-icon twitter"><a data-social="{&quot;type&quot;:&quot;twitter&quot;, &quot;url&quot;:&quot;https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/&quot;, &quot;text&quot;: &quot;New ransomware, old techniques: Petya adds worm capabilities&quot;}" href="#" id="post_tweet_count">0</a></li>
+			<li class="social-icon linkedin"><a data-social="{&quot;type&quot;:&quot;linkedin&quot;, &quot;url&quot;:&quot;https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/&quot;, &quot;text&quot;: &quot;New ransomware, old techniques: Petya adds worm capabilities&quot;}" href="#" id="get_post_linkedin_count">3141</a></li>
+		</ul>
+	</span><!-- .social-icons-wrap -->
+	<script type="text/javascript">
+		// Get social counts
+		jQuery( window ).load(function () {
+			jQuery.getScript('https://blogs.technet.microsoft.com/mmpc/wp-content/themes/microsoft/js/social-counts.js?ver=02092017')
+				.done(function(script,textStatus) {
+					window.msdnsocial.ajax('https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/');
+				});
+		});
+	</script>
+		</div>
+		<hr>
+	</header><!-- .entry-header -->
+
+	<div class="entry-content single">
+		<p><em>(Note: We have published a follow-up blog entry on this 
+ransomware attack.&nbsp;We have&nbsp;new findings from our continued 
+investigation, as well as platform mitigation and protection 
+information: <a target="_blank" href="https://blogs.technet.microsoft.com/mmpc/2017/06/29/windows-10-platform-resilience-against-the-petya-ransomware-attack/">Windows 10 platform resilience against the Petya ransomware attack</a>.)</em></p>
+<p>&nbsp;</p>
+<p>On June 27, 2017 reports of a <a target="_blank" href="https://www.microsoft.com/en-us/security/portal/mmpc/shared/ransomware.aspx">ransomware</a>
+ infection began spreading across Europe. We saw the first infections in
+ Ukraine, where more than 12,500 machines encountered the 
+threat.&nbsp;We then observed infections&nbsp;in another 64 countries, 
+including Belgium, Brazil, Germany, Russia, and the United States.</p>
+<p>The new ransomware has worm capabilities, which allows it to move 
+laterally across infected networks. Based on&nbsp;our 
+investigation,&nbsp;this new ransomware&nbsp;shares similar codes and is
+ a new variant of <a target="_blank" href="https://www.microsoft.com/en-us/security/portal/threat/encyclopedia/Entry.aspx?Name=Ransom:Win32/Petya">Ransom:Win32/Petya</a>. This new strain of ransomware, however, is more sophisticated.</p>
+<p>To protect our customers, we released cloud-delivered protection 
+updates and made updates to our signature definition packages shortly 
+after. These updates were automatically delivered to all Microsoft free 
+antimalware products, including <a target="_blank" href="https://technet.microsoft.com/en-us/itpro/windows/keep-secure/windows-defender-in-windows-10">Windows Defender Antivirus</a> and Microsoft Security Essentials. You can download the latest version of these files manually at the <a target="_blank" href="https://www.microsoft.com/security/portal/definitions/adl.aspx">Malware Protection Center</a>.</p>
+<p><a target="_blank" href="https://www.microsoft.com/en-us/WindowsForBusiness/windows-atp">Windows Defender Advanced Threat Protection</a> (Windows Defender ATP) automatically detects behaviors used by this new ransomware variant without any updates.</p>
+<h2>Delivery and installation</h2>
+<p>Initial infection appears to involve a software supply-chain threat 
+involving the Ukrainian company M.E.Doc, which develops tax accounting 
+software, MEDoc. Although this vector was speculated at length by news 
+media and security researchers—including Ukraine’s own Cyber 
+Police—there was only circumstantial evidence for this vector.&nbsp; 
+Microsoft&nbsp;now has evidence that a few active infections of the 
+ransomware initially started from the legitimate MEDoc updater process. 
+As we highlighted previously, <a target="_blank" href="https://blogs.technet.microsoft.com/mmpc/2017/05/04/windows-defender-atp-thwarts-operation-wilysupply-software-supply-chain-cyberattack/">software supply chain attacks</a> are a recent dangerous trend with attackers, and it requires advanced defense.</p>
+<p>We observed telemetry showing the MEDoc software updater process (<em>EzVit.exe)</em> executing a malicious command-line matching this exact attack pattern on Tuesday, June 27 around 10:30 a.m. GMT.</p>
+<p>The execution chain leading to the ransomware installation is 
+represented in the&nbsp;diagram below and essentially confirms that<em> EzVit.exe</em> process from MEDoc, for unknown reasons, at some moment executed the following command-line:</p>
+<p style="padding-left: 30px"><em>C:\\Windows\\system32\\rundll32.exe\" \"C:\\ProgramData\\perfc.dat\",#1 30</em></p>
+<p><img class="alignnone size-full wp-image-13336" alt="" src="test_microsoft_hashes_files/129.png" width="1846" height="1048"></p>
+<p>The same update vector was also mentioned by the&nbsp;Ukraine Cyber 
+Police in a public list of indicators of compromise (IOCs) , which 
+includes the MEDoc updater.</p>
+<h2>A single ransomware, multiple lateral movement techniques</h2>
+<p>Given this new ransomware's added lateral movement capabilities it 
+only takes a single infected machine to affect a network. The ransomware
+ spreading functionality is composed of multiple methods responsible 
+for:</p>
+<ul>
+<li>stealing credentials or re-using existing active sessions</li>
+<li>using file-shares to transfer the malicious file across machines on the same network</li>
+<li>using existing legitimate functionalities to execute the payload or abusing SMB vulnerabilities for unpatched machines</li>
+</ul>
+<p>In the next sections, we&nbsp;discuss the details of each technique.</p>
+<h2>Lateral movement using credential theft and impersonation</h2>
+<p>This ransomware drops a credential dumping tool (typically as a .tmp file in the <em>%Temp%</em> folder) that&nbsp;shares code similarities with <a target="_blank" href="https://www.microsoft.com/en-us/security/portal/threat/encyclopedia/Entry.aspx?Name=HackTool:Win32/Mimikatz">Mimikatz</a>
+ and comes in 32-bit and 64-bit variants.&nbsp; Because users frequently
+ log in using accounts with local admin privileges and have active 
+sessions opens across multiple machines, stolen credentials are likely 
+to provide the same level of access the user has on other machines.</p>
+<p>Once the ransomware has valid credentials, it scans the local network to establish valid connections on ports <em>tcp/139</em> and <em>tcp/445</em>. A special behavior is reserved for Domain Controllers or servers: this ransomware attempts to&nbsp;call&nbsp;<em>DhcpEnumSubnets()</em>&nbsp;to enumerate DHCP subnets; for each subnet, it gathers all hosts/clients (using <em>DhcpEnumSubnetClients()</em>) for scanning for&nbsp;<em>tcp/139</em>&nbsp;and&nbsp;<em>tcp/445</em>&nbsp;services.
+ If it gets a response, the malware attempts to copy a binary on the 
+remote machine using regular file-transfer functionalities with 
+the&nbsp;stolen credentials.</p>
+<p>It then tries to execute remotely the malware using either PSEXEC or WMIC tools.</p>
+<p>The ransomware attempts to drop the legitimate <em>psexec.exe</em> (typically renamed to <em>dllhost.dat</em>) from an embedded resource within the malware.&nbsp; It then scans the local network for <em>admin$</em> shares, copies itself across the network, and executes the newly copied malware binary remotely using PSEXEC.</p>
+<p>In addition to credential dumping, the malware also tries to steal credentials by using the <em>CredEnumerateW</em> function to get all the other user credentials potentially stored on the credential store. If a credential name starts with <em>"TERMSRV/"</em> and the type is set as 1 (generic) it uses that credential to propagate through the network.</p>
+<p><img class="alignnone size-full wp-image-13345" alt="" src="test_microsoft_hashes_files/petya-access-admin.png" width="702" height="580"></p>
+<p><em>Ransomware code responsible for accessing \\Admin$ shares on different machines</em></p>
+<p>This ransomware also uses the Windows Management Instrumentation Command-line (WMIC) to find remote shares (using <em>NetEnum/NetAdd</em>)
+ to spread to. It uses either a duplicate token of the current user (for
+ existing connections), or a username/password combination (spreading 
+through legit tools).</p>
+<p><img class="alignnone size-full wp-image-13485" alt="" src="test_microsoft_hashes_files/petya-wmic.png" width="895" height="233"></p>
+<p><em>Screenshot showing launch of malware on a remote machine using WMIC</em></p>
+<h2>Lateral movement using EternalBlue&nbsp;and EternalRomance</h2>
+<p>The new ransomware can also spread using an exploit for&nbsp;the Server Message Block&nbsp;(SMB) vulnerability <a target="_blank" href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-0144">CVE-2017-0144</a> (also known as EternalBlue), which was fixed in <a target="_blank" href="https://technet.microsoft.com/en-us/library/security/ms17-010.aspx">security update MS17-010</a> and was also exploited by <a target="_blank" href="https://blogs.technet.microsoft.com/mmpc/2017/05/12/wannacrypt-ransomware-worm-targets-out-of-date-systems/">WannaCrypt</a> to spread to out-of-date machines. In addition, this ransomware also uses a second exploit for <a target="_blank" href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-0145">CVE-2017-0145</a> (also known as EternalRomance, and&nbsp;fixed by the same bulletin).</p>
+<p>We’ve seen this ransomware attempt to use these exploits by generating SMBv1 packets (which are all <em>XOR 0xCC</em> encrypted) to trigger these vulnerabilities at the following address of the malware code:</p>
+<p><img class="alignnone size-full wp-image-13445" alt="" src="test_microsoft_hashes_files/petya-smb-packet.png" width="679" height="274"></p>
+<p><img class="alignnone size-full wp-image-13455" alt="" src="test_microsoft_hashes_files/petya-smb-packet-2.png" width="790" height="319"></p>
+<p>These two exploits were leaked by a group called <a target="_blank" href="https://blogs.technet.microsoft.com/mmpc/2017/06/16/analysis-of-the-shadow-brokers-release-and-mitigation-with-windows-10-virtualization-based-security/">Shadow Brokers</a>. However, it is important to note that both of these vulnerabilities have been fixed by Microsoft in <a target="_blank" href="https://technet.microsoft.com/en-us/library/security/ms17-010.aspx">security update MS17-010</a>&nbsp;on March 14, 2017.</p>
+<p>Machines that are patched against these exploits (with <a target="_blank" href="https://technet.microsoft.com/en-us/library/security/ms17-010.aspx">security update MS17-010</a>) or <a target="_blank" href="https://support.microsoft.com/kb/2696547">have disabled SMBv1</a> are not affected by this particular spreading mechanism. Please refer to our previous <a target="_blank" href="https://blogs.technet.microsoft.com/mmpc/2017/06/16/analysis-of-the-shadow-brokers-release-and-mitigation-with-windows-10-virtualization-based-security/">blog</a> for details on these exploits and how modern Windows 10 mitigations can help to contain similar threats.</p>
+<h2>Encryption</h2>
+<p>This ransomware’s encryption behavior depends on the malware process 
+privilege level and the processes found to be running on the machine. It
+ does this by employing a simple XOR-based hashing algorithm on the 
+process names, and checks against the following hash values to use as a 
+behavior exclusion:</p>
+<p><img class="alignnone size-full wp-image-13365" alt="" src="test_microsoft_hashes_files/petya-encryption-1.png" width="716" height="651"></p>
+<ul>
+<li><em>0x6403527E</em> or <em>0x651B3005</em> – if these hashes of process names are found running on the machine, then the ransomware does not do SMB exploitation.</li>
+</ul>
+<p style="padding-left: 60px"><img class="alignnone size-full wp-image-13555" alt="" src="test_microsoft_hashes_files/petya-smb-exploit-udpate.png" width="740" height="339"></p>
+<ul>
+<li><em>0x2E214B44&nbsp;</em> – if a process with this hashed name is found, the ransomware trashes the first 10 sectors of <em>\\\\.\\PhysicalDrive0</em>, including the MBR</li>
+</ul>
+<p style="padding-left: 60px"><img class="alignnone size-full wp-image-13575" alt="" src="test_microsoft_hashes_files/petya-MBR-overwrite-udpate.png" width="609" height="51"></p>
+<p>This ransomware then writes&nbsp;to the master boot record 
+(MBR)&nbsp;and then&nbsp;sets up the system to reboot. It sets up 
+scheduled tasks to shut down the machine after at least 10 minutes past 
+the current time. The exact time is random <em>(GetTickCount())</em>. For example:</p>
+<p style="padding-left: 30px"><em>schtasks /Create /SC once /TN "" /TR "&lt;system folder&gt;\shutdown.exe /r /f" /ST 14:23</em></p>
+<p>After&nbsp;successfully modifying the MBR, it displays the following 
+fake system message, which notes a supposed error in the drive and shows
+ the fake integrity checking:</p>
+<p><img class="alignnone size-full wp-image-13385" alt="" src="test_microsoft_hashes_files/petya-fake-message.png" width="640" height="400"></p>
+<p>It then displays this ransom note:</p>
+<p><img class="alignnone size-full wp-image-13425" alt="" src="test_microsoft_hashes_files/petya-ransom-note.png" width="640" height="400"></p>
+<p>Only if the malware is running with highest privilege (i.e., with <em>SeDebugPrivilege</em> enabled), it&nbsp;tries to overwrite the MBR code.</p>
+<p>This ransomware attempts to encrypt all files with the following file
+ name extensions in all folders in all fixed drives, except for <em>C:\Windows</em>:</p>
+<table>
+<tbody>
+<tr>
+<td width="156">.3ds</td>
+<td width="156">.7z</td>
+<td width="156">.accdb</td>
+<td width="156">.ai</td>
+</tr>
+<tr>
+<td width="156">.asp</td>
+<td width="156">.aspx</td>
+<td width="156">.avhd</td>
+<td width="156">.back</td>
+</tr>
+<tr>
+<td width="156">.bak</td>
+<td width="156">.c</td>
+<td width="156">.cfg</td>
+<td width="156">.conf</td>
+</tr>
+<tr>
+<td width="156">.cpp</td>
+<td width="156">.cs</td>
+<td width="156">.ctl</td>
+<td width="156">.dbf</td>
+</tr>
+<tr>
+<td width="156">.disk</td>
+<td width="156">.djvu</td>
+<td width="156">.doc</td>
+<td width="156">.docx</td>
+</tr>
+<tr>
+<td width="156">.dwg</td>
+<td width="156">.eml</td>
+<td width="156">.fdb</td>
+<td width="156">.gz</td>
+</tr>
+<tr>
+<td width="156">.h</td>
+<td width="156">.hdd</td>
+<td width="156">.kdbx</td>
+<td width="156">.mail</td>
+</tr>
+<tr>
+<td width="156">.mdb</td>
+<td width="156">.msg</td>
+<td width="156">.nrg</td>
+<td width="156">.ora</td>
+</tr>
+<tr>
+<td width="156">.ost</td>
+<td width="156">.ova</td>
+<td width="156">.ovf</td>
+<td width="156">.pdf</td>
+</tr>
+<tr>
+<td width="156">.php</td>
+<td width="156">.pmf</td>
+<td width="156">.ppt</td>
+<td width="156">.pptx</td>
+</tr>
+<tr>
+<td width="156">.pst</td>
+<td width="156">.pvi</td>
+<td width="156">.py</td>
+<td width="156">.pyc</td>
+</tr>
+<tr>
+<td width="156">.rar</td>
+<td width="156">.rtf</td>
+<td width="156">.sln</td>
+<td width="156">.sql</td>
+</tr>
+<tr>
+<td width="156">.tar</td>
+<td width="156">.vbox</td>
+<td width="156">.vbs</td>
+<td width="156">.vcb</td>
+</tr>
+<tr>
+<td width="156">.vdi</td>
+<td width="156">.vfd</td>
+<td width="156">.vmc</td>
+<td width="156">.vmdk</td>
+</tr>
+<tr>
+<td width="156">.vmsd</td>
+<td width="156">.vmx</td>
+<td width="156">.vsdx</td>
+<td width="156">.vsv</td>
+</tr>
+<tr>
+<td width="156">.work</td>
+<td width="156">.xls</td>
+<td width="156">.xlsx</td>
+<td width="156">.xvd</td>
+</tr>
+<tr>
+<td width="156">.zip</td>
+<td width="156"></td>
+<td width="156"></td>
+<td width="156"></td>
+</tr>
+</tbody>
+</table>
+<p>It uses file mapping APIs instead of a usual <em>ReadFile()</em>/<em>WriteFile()</em> APIs:</p>
+<p><img class="alignnone size-full wp-image-13395" alt="" src="test_microsoft_hashes_files/petya-file-mapping-API.png" width="925" height="276"></p>
+<p>Unlike most other ransomware, this threat does not append a new file 
+name extension to encrypted files. Instead, it overwrites the said 
+files.</p>
+<p>The AES key generated for encryption is per machine, per fixed 
+drive,&nbsp;and gets exported and encrypted using the embedded 2048-bit 
+RSA public key of the attacker.</p>
+<p><img class="alignnone size-full wp-image-13436" alt="" src="test_microsoft_hashes_files/petya-rsa-public-encryption-key.png" width="598" height="382"></p>
+<p><em>Embedded RSA public key</em></p>
+<p><img class="alignnone size-full wp-image-13355" alt="" src="test_microsoft_hashes_files/petya-aes-128-key.png" width="1115" height="521"></p>
+<p><em>Code exporting the&nbsp;AES 128 bit key per machine, 
+per&nbsp;fixed drive in the machine and encrypting it using embedded RSA
+ public key during export</em></p>
+<p>The unique key used for files encryption (AES) is added, in encrypted form, to the <em>README.TXT</em> file the threat writes under section <em>"Your personal installation key:"</em>.</p>
+<p>Beyond encrypting files, this ransomware also attempts to infect the MBR or destroy certain sectors of VBR and MBR:</p>
+<p><img class="alignnone size-full wp-image-13565" alt="" src="test_microsoft_hashes_files/petya-infect-mbr.png" width="1029" height="445"></p>
+<p>After completing its encryption routine,&nbsp;this ransomware&nbsp;drops a text file called <em>README.TXT</em> in each fixed drive. The said file has&nbsp;the following text:</p>
+<p><img class="alignnone size-full wp-image-13435" alt="" src="test_microsoft_hashes_files/petya-readme.png" width="878" height="355"></p>
+<p>This ransomware also clears the System, Setup, Security, Application event logs and deletes NTFS journal info.</p>
+<h2>Detection and investigation with Windows Defender Advanced Threat Protection</h2>
+<p><a target="_blank" href="https://www.microsoft.com/en-us/WindowsForBusiness/windows-atp">Windows Defender Advanced Threat Protection</a>
+ (Windows Defender ATP) is a post-breach solution and offers by-design 
+detections for this attack without need of any signature updates. 
+Windows Defender ATP sensors constantly monitor and collect telemetry 
+from the endpoints and offers machine-learning detections for common 
+lateral movement techniques and tools used by this ransomware, 
+including, for example, the execution of <em>PsExec.exe</em> with different filename, and the creation of the <em>perfc.dat</em> file in remote shares (UNC) paths.</p>
+<p>Today, without the need of additional updates, an infected machine may look like this:</p>
+<p><img class="alignnone size-full wp-image-13465" alt="" src="test_microsoft_hashes_files/petya-windows-defender-ATP1.png" width="1901" height="837"></p>
+<p>The second alert targets the distribution of the ransomware’s .dll 
+file over the network. This event provides helpful information during 
+investigation as it includes the User context&nbsp;that was used to move
+ the file remotely.&nbsp; This user has been compromised and could 
+represent the user associated with patient-zero:</p>
+<p><img class="alignnone size-full wp-image-13475" alt="" src="test_microsoft_hashes_files/petya-windows-defender-ATP2.png" width="1890" height="1024"></p>
+<p>With Windows Defender ATP, enterprise customers are well-equipped to 
+quickly identify Petya outbreaks, investigate the scope of the attack, 
+and respond early to malware delivery campaigns.</p>
+<h2>Protection against this new ransomware attack</h2>
+<p>Keeping your <a target="_blank" href="https://www.microsoft.com/en-us/windows/windows-10-upgrade">Windows 10</a> <a target="_blank" href="https://support.microsoft.com/en-us/help/311047/how-to-keep-your-windows-computer-up-to-date">up-to-date</a>
+ gives you the benefits of the latest features and proactive mitigations
+ built into the latest versions of Windows. In Creators Update, we 
+further <a target="_blank" href="https://blogs.technet.microsoft.com/mmpc/2017/06/08/windows-10-creators-update-hardens-security-with-next-gen-defense/">hardened Windows 10 against ransomware attacks</a> by introducing new next-gen technologies and enhancing existing ones.</p>
+<p>As another layer of protection, <a target="_blank" href="https://www.microsoft.com/en-us/windows/windows-10-s">Windows 10 S</a> only allows apps that come from the Windows Store to run. Windows 10 S users are further protected from this threat.</p>
+<p>We recommend customers that have not yet installed security update <a target="_blank" href="https://technet.microsoft.com/en-us/library/security/ms17-010.aspx">MS17-010</a>
+ to do so as soon as possible. Until&nbsp;you can apply the patch, we 
+also recommend two possible workarounds to reduce the attack surface:</p>
+<ul>
+<li>Disable SMBv1 with the steps documented at <a target="_blank" href="https://support.microsoft.com/kb/2696547">Microsoft Knowledge Base Article 2696547</a> and as <a target="_blank" href="https://blogs.technet.microsoft.com/filecab/2016/09/16/stop-using-smb1/">recommended previously</a></li>
+<li>Consider adding a rule on your router or firewall to block incoming SMB traffic on port 445</li>
+</ul>
+<p>As the threat targets ports 139 and 445, you customers can block any 
+traffic on those ports to prevent propagation either into or out of 
+machines in&nbsp;the network. You&nbsp;can also disable remote WMI and 
+file sharing. These may have large impacts on the capability of your 
+network, but may be suggested for a very short time period while you 
+assess the impact and <a target="_blank" href="https://www.microsoft.com/security/portal/definitions/adl.aspx">apply definition updates</a>.</p>
+<p>Aside from exploiting vulnerabilities, this threat can also spread 
+across networks by stealing credentials, which it then uses to attempt 
+to copy and execute a copy on remote machines. You can prevent 
+credential theft by ensuring credential hygiene across the organization.
+ <a href="https://docs.microsoft.com/en-us/windows-server/identity/securing-privileged-access/securing-privileged-access">Secure privileged access</a> to prevent the spread of threats like Petya and to protect your organization’s assets. Use <a href="https://docs.microsoft.com/en-us/windows/access-protection/credential-guard/credential-guard">Credential Guard</a> to protect domain credentials stored in the Windows Credential Store.</p>
+<p>Windows Defender Antivirus detects this threat as <a target="_blank" href="https://www.microsoft.com/en-us/security/portal/threat/encyclopedia/entry.aspx?Name=Ransom:Win32/Petya">Ransom:Win32/Petya</a> as of the <a target="_blank" href="https://www.microsoft.com/security/portal/definitions/adl.aspx">1.247.197.0 update</a>. Windows Defender Antivirus uses cloud-based protection, helping to protect you from the latest threats.</p>
+<p>For enterprises, use&nbsp;<a href="https://technet.microsoft.com/itpro/windows/keep-secure/device-guard-deployment-guide"><span>Device Guard</span></a>
+ to lock down devices and provide kernel-level virtualization-based 
+security, allowing only trusted applications to run, effectively 
+preventing malware from running.</p>
+<p>Monitor networks with <a href="http://www.microsoft.com/en-us/WindowsForBusiness/windows-atp"><span>Windows Defender Advanced Threat Protection</span></a>,
+ which alerts security operations teams about suspicious activities. 
+Download this playbook to see how you can leverage Windows Defender ATP 
+to detect, investigate, and mitigate ransomware in networks: <a href="https://www.microsoft.com/en-us/download/details.aspx?id=55090"><span>Windows Defender Advanced Threat Protection – Ransomware response playbook</span></a>.</p>
+<h2>Resources</h2>
+<p>MSRC blog: <a target="_blank" href="https://blogs.technet.microsoft.com/msrc/2017/06/28/update-on-petya-malware-attacks/">https://blogs.technet.microsoft.com/msrc/2017/06/28/update-on-petya-malware-attacks/</a></p>
+<p>Next-generation ransomware protection with Windows 10 Creators Update: <a target="_blank" href="https://blogs.technet.microsoft.com/mmpc/2017/06/08/windows-10-creators-update-hardens-security-with-next-gen-defense/">https://blogs.technet.microsoft.com/mmpc/2017/06/08/windows-10-creators-update-hardens-security-with-next-gen-defense/</a></p>
+<p><span>Download English language security updates: </span><a href="http://download.windowsupdate.com/d/csa/csa/secu/2017/02/windowsserver2003-kb4012598-x64-custom-enu_f24d8723f246145524b9030e4752c96430981211.exe"><span>Windows Server 2003 SP2 x64</span></a><span>, </span><a href="http://download.windowsupdate.com/c/csa/csa/secu/2017/02/windowsserver2003-kb4012598-x86-custom-enu_f617caf6e7ee6f43abe4b386cb1d26b3318693cf.exe"><span>Windows Server 2003 SP2 x86,</span></a> <a href="http://download.windowsupdate.com/d/csa/csa/secu/2017/02/windowsserver2003-kb4012598-x64-custom-enu_f24d8723f246145524b9030e4752c96430981211.exe"><span>Windows XP SP2 x64</span></a><span>, </span><a href="http://download.windowsupdate.com/d/csa/csa/secu/2017/02/windowsxp-kb4012598-x86-custom-enu_eceb7d5023bbb23c0dc633e46b9c2f14fa6ee9dd.exe"><span>Windows XP SP3 x86</span></a><span>, </span><a href="http://download.windowsupdate.com/c/csa/csa/secu/2017/02/windowsxp-kb4012598-x86-embedded-custom-enu_8f2c266f83a7e1b100ddb9acd4a6a3ab5ecd4059.exe"><span>Windows XP Embedded SP3 x86</span></a><span>, </span><a href="http://download.windowsupdate.com/c/msdownload/update/software/secu/2017/05/windows8-rt-kb4012598-x86_a0f1c953a24dd042acc540c59b339f55fb18f594.msu"><span>Windows 8 x86,</span></a> <a href="http://download.windowsupdate.com/c/msdownload/update/software/secu/2017/05/windows8-rt-kb4012598-x64_f05841d2e94197c2dca4457f1b895e8f632b7f8e.msu"><span>Windows 8 x64</span></a></p>
+<p><span>Download localized language security updates: </span><a href="http://www.microsoft.com/downloads/details.aspx?FamilyId=d3cb7407-3339-452e-8371-79b9c301132e"><span>Windows Server 2003 SP2 x64</span></a><span>, </span><a href="http://www.microsoft.com/downloads/details.aspx?FamilyId=350ec04d-a0ba-4a50-9be3-f900dafeddf9"><span>Windows Server 2003 SP2 x86</span></a><span>, </span><a href="http://www.microsoft.com/downloads/details.aspx?FamilyId=5fbaa61b-15ce-49c7-9361-cb5494f9d6aa"><span>Windows XP SP2 x64</span></a><span>, </span><a href="http://www.microsoft.com/downloads/details.aspx?FamilyId=7388c05d-9de6-4c6a-8b21-219df407754f"><span>Windows XP SP3 x86</span></a><span>, </span><a href="http://www.microsoft.com/downloads/details.aspx?FamilyId=a1db143d-6ad2-4e7e-9e90-2a73316e1add"><span>Windows XP Embedded SP3 x86</span></a><span>, </span><a href="http://www.microsoft.com/downloads/details.aspx?FamilyId=6e2de6b7-9e43-4b42-aca2-267f24210340"><span>Windows 8 x86</span></a><span>, </span><a href="http://www.microsoft.com/downloads/details.aspx?FamilyId=b08bb3f1-f156-4e61-8a68-077963bae8c0"><span>Windows 8 x64</span></a></p>
+<p>MS17-010 Security Update: <a target="_blank" href="https://technet.microsoft.com/en-us/library/security/ms17-010.aspx">https://technet.microsoft.com/en-us/library/security/ms17-010.aspx</a></p>
+<p>General information on ransomware: <a target="_blank" href="https://www.microsoft.com/en-us/security/portal/mmpc/shared/ransomware.aspx">https://www.microsoft.com/en-us/security/portal/mmpc/shared/ransomware.aspx</a></p>
+<p>Security for IT Pros: <a target="_blank" href="https://technet.microsoft.com/en-us/security/default">https://technet.microsoft.com/en-us/security/default</a></p>
+<h2>Indicators of Compromise</h2>
+<p>Network defenders may search for the following indicators:</p>
+<p><strong>File indicators</strong></p>
+<ul>
+<li>34f917aaba5684fbe56d3c57d48ef2a1aa7cf06d</li>
+<li>9717cfdc2d023812dbc84a941674eb23a2a8ef06</li>
+<li>38e2855e11e353cedf9a8a4f2f2747f1c5c07fcf</li>
+<li>56c03d8e43f50568741704aee482704a4f5005ad</li>
+</ul>
+<p><strong>Command lines</strong></p>
+<p>In environments where command-line logging is available, the following command lines may be searched:</p>
+<ul>
+<li>Scheduled Reboot Task:&nbsp; Petya schedules a reboot for a random time between 10 and 60 minutes from the current time
+<ul>
+<li><em>schtasks /Create /SC once /TN "" /TR "&lt;system folder&gt;\shutdown.exe /r /f" /ST &lt;time&gt;</em></li>
+<li><em>cmd.exe /c schtasks /RU "SYSTEM" /Create /SC once /TN "" /TR "C:\Windows\system32\shutdown.exe /r /f" /ST &lt;time&gt;</em></li>
+</ul>
+</li>
+</ul>
+<p>This may be surfaced by searching for EventId 106 (General Task 
+Registration) which captures tasks registered with the Task Scheduler 
+service.</p>
+<ul>
+<li>Lateral Movement (Remote WMI)
+<ul>
+<li><em>"process call create \"C:\\Windows\\System32\\rundll32.exe \\\"C:\\Windows\\perfc.dat\\\" #1"</em></li>
+</ul>
+</li>
+</ul>
+<p><strong>Network indicators</strong></p>
+<p>In environments where NetFlow data are available, this ransomware’s 
+subnet-scanning behavior may be observed by looking for the following:</p>
+<ul>
+<li>Workstations scanning ports tcp/139 and tcp/445 on their own local (/24) network scope</li>
+<li>Servers (in particular, domain controllers) scanning ports tcp/139 and tcp/445 across multiple /24 scopes</li>
+</ul>
+<p><em>&nbsp;</em></p>
+	</div><!-- .entry-content -->
+
+
+	<footer class="entry-footer single">
+					<div class="tags">
+				<span>Tags </span>
+				<span>
+					<a href="https://blogs.technet.microsoft.com/mmpc/tag/eternalblue/" rel="tag">ETERNALBLUE</a> <a href="https://blogs.technet.microsoft.com/mmpc/tag/eternalromance/" rel="tag">ETERNALROMANCE</a> <a href="https://blogs.technet.microsoft.com/mmpc/tag/exploits/" rel="tag">exploits</a> <a href="https://blogs.technet.microsoft.com/mmpc/tag/ms17-010/" rel="tag">MS17-010</a> <a href="https://blogs.technet.microsoft.com/mmpc/tag/petya/" rel="tag">Petya</a> <a href="https://blogs.technet.microsoft.com/mmpc/tag/ransomware/" rel="tag">ransomware</a> <a href="https://blogs.technet.microsoft.com/mmpc/tag/ransomware-outbreak/" rel="tag">ransomware outbreak</a> <a href="https://blogs.technet.microsoft.com/mmpc/tag/software-supply-chain/" rel="tag">software supply chain</a> <a href="https://blogs.technet.microsoft.com/mmpc/tag/wannaccrypt/" rel="tag">WannacCrypt</a> <a href="https://blogs.technet.microsoft.com/mmpc/tag/windows-defender-atp/" rel="tag">Windows Defender ATP</a> <a href="https://blogs.technet.microsoft.com/mmpc/tag/worm/" rel="tag">worm</a> <a href="https://blogs.technet.microsoft.com/mmpc/tag/worm-like-ransomware/" rel="tag">worm-like ransomware</a>				</span>
+			</div>
+				<hr>
+	</footer><!-- .entry-footer -->
+
+</article><!-- #post-## -->
+
+			
+		</div><!-- #single-content -->
+
+		
+<div id="comments" class="comments-area">
+	<div class="comments-title">
+		Comments (70)	</div>
+
+		<div id="respond" class="comment-respond">
+		<h3 id="reply-title" class="comment-reply-title"> <small><a rel="nofollow" id="cancel-comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#respond" style="display:none;">Cancel reply</a></small></h3>			<form action="https://blogs.technet.microsoft.com/mmpc/wp-comments-post.php" method="post" id="commentform" class="comment-form">
+				<p class="comment-form-comment"><textarea id="comment" name="comment" cols="45" rows="4" aria-required="true"></textarea></p><p class="comment-form-author"><label for="author">Name <span class="required">*</span></label> <input id="author" name="author" size="30" maxlength="245" aria-required="true" required="required" type="text"></p>
+<p class="comment-form-email"><label for="email">Email <span class="required">*</span></label> <input id="email" name="email" size="30" maxlength="100" aria-describedby="email-notes" aria-required="true" required="required" type="text"></p>
+<p class="comment-form-url"><label for="url">Website</label> <input id="url" name="url" size="30" maxlength="200" type="text"></p>
+<p class="form-submit"><input name="submit" id="submit" class="submit btn btn-default" value="Post Comment" type="submit"> <input name="comment_post_ID" value="13175" id="comment_post_ID" type="hidden">
+<input name="comment_parent" id="comment_parent" value="0" type="hidden">
+</p><p style="display: none;"><input id="akismet_comment_nonce" name="akismet_comment_nonce" value="2579b10304" type="hidden"></p><p style="display: none;"></p>			<input id="ak_js" name="ak_js" value="1505359358006" type="hidden"></form>
+			</div><!-- #respond -->
+	
+			<div class="navigation pagination clear-both">
+					</div>
+
+		<ol class="comment-list">
+					<li class="comment even thread-even depth-1" id="comment-64015">
+				<div id="div-comment-64015" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/79516135fabc4a3d0078d0746cb0bde8.jpeg" srcset="https://secure.gravatar.com/avatar/79516135fabc4a3d0078d0746cb0bde8?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn"><a href="http://security.uonbi.ac.ke/" rel="external nofollow" class="url">Simon</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64015">
+			June 28, 2017 at 01:31</a>		</div>
+
+		<p>Thanks for sharing. Very informative</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64015#respond" onclick='return addComment.moveForm( "div-comment-64015", "64015", "respond", "13175" )' aria-label="Reply to Simon">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+		<li class="comment odd alt thread-odd thread-alt depth-1 parent" id="comment-64025">
+				<div id="div-comment-64025" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/58955991a3888d65457f220c99758dd7.jpeg" srcset="https://secure.gravatar.com/avatar/58955991a3888d65457f220c99758dd7?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">Aurelien Desseaux</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64025">
+			June 28, 2017 at 01:32</a>		</div>
+
+		<p>Thanks for this article. Could you confirm that System center 
+endpoint protection is aware of this processes and block them 
+effitiently please ?</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64025#respond" onclick='return addComment.moveForm( "div-comment-64025", "64025", "respond", "13175" )' aria-label="Reply to Aurelien Desseaux">Reply</a></div>
+				</div>
+		<ol class="children">
+		<li class="comment even depth-2" id="comment-64047">
+				<div id="div-comment-64047" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/58955991a3888d65457f220c99758dd7.jpeg" srcset="https://secure.gravatar.com/avatar/58955991a3888d65457f220c99758dd7?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">Aurelien Desseaux</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64047">
+			June 28, 2017 at 02:36</a>		</div>
+
+		<p>I got the Tam info, thanks MS Av detect and block this threat with definition 1.247.197.0 from 27 juin 2017 at 12:04:25</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64047#respond" onclick='return addComment.moveForm( "div-comment-64047", "64047", "respond", "13175" )' aria-label="Reply to Aurelien Desseaux">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+</ol><!-- .children -->
+</li><!-- #comment-## -->
+		<li class="comment odd alt thread-even depth-1" id="comment-64026">
+				<div id="div-comment-64026" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/a69bab62e423e97fb364acde60951e7e.png" srcset="https://secure.gravatar.com/avatar/a69bab62e423e97fb364acde60951e7e?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">Yoshihiro Kawabata</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64026">
+			June 28, 2017 at 01:54</a>		</div>
+
+		<p>Thank you, detail information about this malware</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64026#respond" onclick='return addComment.moveForm( "div-comment-64026", "64026", "respond", "13175" )' aria-label="Reply to Yoshihiro Kawabata">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+		<li class="comment even thread-odd thread-alt depth-1 parent" id="comment-64045">
+				<div id="div-comment-64045" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/5374e173fbf71d73022a2edc60b5fdae.jpeg" srcset="https://secure.gravatar.com/avatar/5374e173fbf71d73022a2edc60b5fdae?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">Max</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64045">
+			June 28, 2017 at 01:57</a>		</div>
+
+		<p>&gt; Only if the malware is running with highest privilege (i.e., 
+with SeDebugPrivilege enabled), it tries to overwrite the MBR code.<br>
+so what’s going on if the malware is not running with the 
+SeDebugPrivilege enabled (cannot write to MBR) will it still encrypt the
+ files ?</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64045#respond" onclick='return addComment.moveForm( "div-comment-64045", "64045", "respond", "13175" )' aria-label="Reply to Max">Reply</a></div>
+				</div>
+		<ol class="children">
+		<li class="comment odd alt depth-2" id="comment-64516">
+				<div id="div-comment-64516" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/d9c2a1fe761f9f27c5b13dd6bcc72176.jpeg" srcset="https://secure.gravatar.com/avatar/d9c2a1fe761f9f27c5b13dd6bcc72176?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">Andras</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64516">
+			June 29, 2017 at 00:44</a>		</div>
+
+		<p>Yep, it stills encrypts them but allows you to boot instead of displaying the fake CHKDSK.</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64516#respond" onclick='return addComment.moveForm( "div-comment-64516", "64516", "respond", "13175" )' aria-label="Reply to Andras">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+</ol><!-- .children -->
+</li><!-- #comment-## -->
+		<li class="comment even thread-even depth-1 parent" id="comment-64046">
+				<div id="div-comment-64046" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/3b6a2cdd55635012a4356f9697c3d603.jpeg" srcset="https://secure.gravatar.com/avatar/3b6a2cdd55635012a4356f9697c3d603?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">David</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64046">
+			June 28, 2017 at 02:31</a>		</div>
+
+		<p>Page above states: “We recommend customers that have not yet installed security update MS17-010 to do so as soon as possible.”<br>
+When I look at my windows 10 update page it makes no mention of MS17-010</p>
+<p>I just see things like: “Microsoft .NET Framework 4.7 for Windows 10 
+Version 1607 and Windows Server 2016 for x64 (KB3186568)” and further 
+down “2017-06 Update for Windows 10 Version 1607 for x64-based Systems 
+(KB4023834)”</p>
+<p>You would have thought Microsoft would at least use the same language people see in their update page.</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64046#respond" onclick='return addComment.moveForm( "div-comment-64046", "64046", "respond", "13175" )' aria-label="Reply to David">Reply</a></div>
+				</div>
+		<ol class="children">
+		<li class="comment odd alt depth-2" id="comment-64055">
+				<div id="div-comment-64055" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/4a0acf7e1a8ef338962b783e4f3d8df2.jpeg" srcset="https://secure.gravatar.com/avatar/4a0acf7e1a8ef338962b783e4f3d8df2?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">Paul Prior</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64055">
+			June 28, 2017 at 02:54</a>		</div>
+
+		<p>You already have it installed. W10 uses cumulative updates covering
+ multiple exploits and this was included in the March 2017 cumulative 
+update. That said, install all those other patches as one of them is the
+ June cumulative update which closes other possible exploits.</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64055#respond" onclick='return addComment.moveForm( "div-comment-64055", "64055", "respond", "13175" )' aria-label="Reply to Paul Prior">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+</ol><!-- .children -->
+</li><!-- #comment-## -->
+		<li class="comment even thread-odd thread-alt depth-1" id="comment-64065">
+				<div id="div-comment-64065" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/225481d8b2ef864c8d3f748f59375692.jpeg" srcset="https://secure.gravatar.com/avatar/225481d8b2ef864c8d3f748f59375692?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">Caleb</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64065">
+			June 28, 2017 at 02:59</a>		</div>
+
+		<p>Nice job!! Thanks for sharing so important info.</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64065#respond" onclick='return addComment.moveForm( "div-comment-64065", "64065", "respond", "13175" )' aria-label="Reply to Caleb">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+		<li class="comment odd alt thread-even depth-1 parent" id="comment-64066">
+				<div id="div-comment-64066" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/472402c65bba6b088ee8512bd7e2cd7f.jpeg" srcset="https://secure.gravatar.com/avatar/472402c65bba6b088ee8512bd7e2cd7f?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">Zer</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64066">
+			June 28, 2017 at 03:13</a>		</div>
+
+		<p>When the files are crypted ? Before or after reboot ? </p>
+<p>Bitlocker can protect that ?</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64066#respond" onclick='return addComment.moveForm( "div-comment-64066", "64066", "respond", "13175" )' aria-label="Reply to Zer">Reply</a></div>
+				</div>
+		<ol class="children">
+		<li class="comment even depth-2" id="comment-64115">
+				<div id="div-comment-64115" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/685e6ae7c949de3b68b3347d3fa120fc.jpeg" srcset="https://secure.gravatar.com/avatar/685e6ae7c949de3b68b3347d3fa120fc?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">Natik</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64115">
+			June 28, 2017 at 04:37</a>		</div>
+
+		<p>2 modes: Encrypt after restart</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64115#respond" onclick='return addComment.moveForm( "div-comment-64115", "64115", "respond", "13175" )' aria-label="Reply to Natik">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+		<li class="comment odd alt depth-2" id="comment-65336">
+				<div id="div-comment-65336" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/e404d89c05c6bd1bbef659e9a536836e.jpeg" srcset="https://secure.gravatar.com/avatar/e404d89c05c6bd1bbef659e9a536836e?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">Kristen</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-65336">
+			July 2, 2017 at 20:28</a>		</div>
+
+		<p>If MBR is altered with Bitlocker enabled it should send the system into Bitlocker Recovery Mode.  <a href="https://technet.microsoft.com/en-us/library/dn383583%28v=ws.11%29" rel="nofollow">https://technet.microsoft.com/en-us/library/dn383583(v=ws.11)</a>.aspx<br>
+However, in this specific case it would not have mattered because the 
+affected systems were not running Bitlocker supported OS versions.</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=65336#respond" onclick='return addComment.moveForm( "div-comment-65336", "65336", "respond", "13175" )' aria-label="Reply to Kristen">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+</ol><!-- .children -->
+</li><!-- #comment-## -->
+		<li class="comment even thread-odd thread-alt depth-1" id="comment-64075">
+				<div id="div-comment-64075" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/4a71037dca0412f770ac08a958107711.jpeg" srcset="https://secure.gravatar.com/avatar/4a71037dca0412f770ac08a958107711?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">ltesmh</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64075">
+			June 28, 2017 at 03:35</a>		</div>
+
+		<p>good job!usefull information</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64075#respond" onclick='return addComment.moveForm( "div-comment-64075", "64075", "respond", "13175" )' aria-label="Reply to ltesmh">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+		<li class="comment odd alt thread-even depth-1" id="comment-64085">
+				<div id="div-comment-64085" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/3f3a4da2ef742853592d552777d24448.jpeg" srcset="https://secure.gravatar.com/avatar/3f3a4da2ef742853592d552777d24448?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">shantanu</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64085">
+			June 28, 2017 at 03:38</a>		</div>
+
+		<p>Very informative and descriptive…..thank you!</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64085#respond" onclick='return addComment.moveForm( "div-comment-64085", "64085", "respond", "13175" )' aria-label="Reply to shantanu">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+		<li class="comment even thread-odd thread-alt depth-1 parent" id="comment-64095">
+				<div id="div-comment-64095" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/d6b3371456a673372db118ed7baa7059.jpeg" srcset="https://secure.gravatar.com/avatar/d6b3371456a673372db118ed7baa7059?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">Shine Raj</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64095">
+			June 28, 2017 at 03:52</a>		</div>
+
+		<p>WannCry/Petya – RansomWare: How to protect Windows 7 Home Premium 64bit? Have already updated Microsoft Security Essentials.<br>
+Is there any port or services to be disabled?</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64095#respond" onclick='return addComment.moveForm( "div-comment-64095", "64095", "respond", "13175" )' aria-label="Reply to Shine Raj">Reply</a></div>
+				</div>
+		<ol class="children">
+		<li class="comment byuser comment-author-marshal odd alt depth-2" id="comment-64125">
+				<div id="div-comment-64125" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/avatar_007.jpg" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn"><a href="https://social.technet.microsoft.com/profile/JimmySal" rel="external nofollow" class="url">JimmySal</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64125">
+			June 28, 2017 at 05:44</a>		</div>
+
+		<p>Hi,</p>
+<p>Yes, you can follow this link and check the patch for Win7. <a href="https://technet.microsoft.com/en-us/library/security/ms17-010.aspx" rel="nofollow">https://technet.microsoft.com/en-us/library/security/ms17-010.aspx</a></p>
+<p>Also you can disable port TCP139 and TCP 445 if you suspect network 
+is infected with the ransomware as a last resort. Before that make sure 
+your systems are patched and AV updated.</p>
+<p>Hope this helps.</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64125#respond" onclick='return addComment.moveForm( "div-comment-64125", "64125", "respond", "13175" )' aria-label="Reply to JimmySal">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+</ol><!-- .children -->
+</li><!-- #comment-## -->
+		<li class="comment even thread-even depth-1" id="comment-64105">
+				<div id="div-comment-64105" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/4238072c1130f28b42f8e1eead81dcb2.jpeg" srcset="https://secure.gravatar.com/avatar/4238072c1130f28b42f8e1eead81dcb2?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">alex</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64105">
+			June 28, 2017 at 03:52</a>		</div>
+
+		<p>Hi team, is it possible, that C:\ProgramData should state C:\Windows or are both possible locations?</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64105#respond" onclick='return addComment.moveForm( "div-comment-64105", "64105", "respond", "13175" )' aria-label="Reply to alex">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+		<li class="comment odd alt thread-odd thread-alt depth-1 parent" id="comment-64116">
+				<div id="div-comment-64116" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/67341dab37d283a437a6b648a8bc13bc.jpeg" srcset="https://secure.gravatar.com/avatar/67341dab37d283a437a6b648a8bc13bc?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">Дмитрий</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64116">
+			June 28, 2017 at 05:34</a>		</div>
+
+		<p>On Win7, Win8 and Win10, users had the rights as “Users”, blocked ports and installed all the updates.<br>
+And still, all 47 computers were infected with a virus Petya !!!<br>
+What can be done to restore the data?!?!?!</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64116#respond" onclick='return addComment.moveForm( "div-comment-64116", "64116", "respond", "13175" )' aria-label="Reply to Дмитрий">Reply</a></div>
+				</div>
+		<ol class="children">
+		<li class="comment even depth-2" id="comment-64185">
+				<div id="div-comment-64185" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/1b8979680880ebe436f5c89f8665bc94.jpeg" srcset="https://secure.gravatar.com/avatar/1b8979680880ebe436f5c89f8665bc94?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">Tom</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64185">
+			June 28, 2017 at 06:51</a>		</div>
+
+		<p>Try RStudio or similar programm. We got the files from infected disks</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64185#respond" onclick='return addComment.moveForm( "div-comment-64185", "64185", "respond", "13175" )' aria-label="Reply to Tom">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+		<li class="comment odd alt depth-2" id="comment-64206">
+				<div id="div-comment-64206" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/011b6098bb45b5150bd602c3a8fdf7e3.jpeg" srcset="https://secure.gravatar.com/avatar/011b6098bb45b5150bd602c3a8fdf7e3?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">Gav</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64206">
+			June 28, 2017 at 07:37</a>		</div>
+
+		<p>Your only option is to restore from backups.  Paying the ransom will not work.</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64206#respond" onclick='return addComment.moveForm( "div-comment-64206", "64206", "respond", "13175" )' aria-label="Reply to Gav">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+		<li class="comment byuser comment-author-yurenevpavel even depth-2" id="comment-64215">
+				<div id="div-comment-64215" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/avatar_003.jpg" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn"><a href="https://social.technet.microsoft.com/profile/Pavel+Yurenev" rel="external nofollow" class="url">Pavel Yurenev</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64215">
+			June 28, 2017 at 07:43</a>		</div>
+
+		<p>Unfortunately the only opportunity is to restore from backup</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64215#respond" onclick='return addComment.moveForm( "div-comment-64215", "64215", "respond", "13175" )' aria-label="Reply to Pavel Yurenev">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+		<li class="comment odd alt depth-2" id="comment-64335">
+				<div id="div-comment-64335" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/8401c868804773083186543a5226cf3a.jpeg" srcset="https://secure.gravatar.com/avatar/8401c868804773083186543a5226cf3a?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">Nicho</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64335">
+			June 28, 2017 at 11:34</a>		</div>
+
+		<p>Could they be using this MEDoc?</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64335#respond" onclick='return addComment.moveForm( "div-comment-64335", "64335", "respond", "13175" )' aria-label="Reply to Nicho">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+		<li class="comment even depth-2" id="comment-64385">
+				<div id="div-comment-64385" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/8335b307c55de1b25d0079ca066f8950.jpeg" srcset="https://secure.gravatar.com/avatar/8335b307c55de1b25d0079ca066f8950?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">Yoshihiro Kawabaa</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64385">
+			June 28, 2017 at 13:17</a>		</div>
+
+		<p>300 bitcoins!</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64385#respond" onclick='return addComment.moveForm( "div-comment-64385", "64385", "respond", "13175" )' aria-label="Reply to Yoshihiro Kawabaa">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+</ol><!-- .children -->
+</li><!-- #comment-## -->
+		<li class="comment odd alt thread-even depth-1 parent" id="comment-64135">
+				<div id="div-comment-64135" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/8d145a4e2bd905e91fd634a3540ecebf.jpeg" srcset="https://secure.gravatar.com/avatar/8d145a4e2bd905e91fd634a3540ecebf?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">Guilherme</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64135">
+			June 28, 2017 at 05:58</a>		</div>
+
+		<p>Thanks for sharing. </p>
+<p>So, I assume that if I have all my computers, servers and W7, 8 and 
+10 up to date with the Windows Update, the update that fix the bug is 
+installed, right?<br>
+In that case, I don’t need to download the update in the internet?</p>
+<p>Thanks!!!</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64135#respond" onclick='return addComment.moveForm( "div-comment-64135", "64135", "respond", "13175" )' aria-label="Reply to Guilherme">Reply</a></div>
+				</div>
+		<ol class="children">
+		<li class="comment byuser comment-author-dj_zx even depth-2" id="comment-64355">
+				<div id="div-comment-64355" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/avatar_002.jpg" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn"><a href="https://social.technet.microsoft.com/profile/DJ_ZX" rel="external nofollow" class="url">DJ_ZX</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64355">
+			June 28, 2017 at 11:48</a>		</div>
+
+		<p>Updated Win10 CU with all new cumulative updates and Win10 Insider 
+Fast latest were attacked and affected. Probably used “admin” shares but
+ anyway – Defender from Enterprise just ignored virus shared through 
+network.</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64355#respond" onclick='return addComment.moveForm( "div-comment-64355", "64355", "respond", "13175" )' aria-label="Reply to DJ_ZX">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+</ol><!-- .children -->
+</li><!-- #comment-## -->
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="comment-64165">
+				<div id="div-comment-64165" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/1b8979680880ebe436f5c89f8665bc94.jpeg" srcset="https://secure.gravatar.com/avatar/1b8979680880ebe436f5c89f8665bc94?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">Tom</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64165">
+			June 28, 2017 at 06:24</a>		</div>
+
+		<p>Unfortunately, MS17-010 doesn’t prevent OS infection with this virus.</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64165#respond" onclick='return addComment.moveForm( "div-comment-64165", "64165", "respond", "13175" )' aria-label="Reply to Tom">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+		<li class="comment even thread-even depth-1" id="comment-64175">
+				<div id="div-comment-64175" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/1c1dfdd8f76bf61434ab3691544c1250.jpeg" srcset="https://secure.gravatar.com/avatar/1c1dfdd8f76bf61434ab3691544c1250?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">PierreD</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64175">
+			June 28, 2017 at 06:27</a>		</div>
+
+		<p>I am trying to figure out what would happen if a user without 
+administrator privilege would execute this malware in a terminal server 
+session.  Would it infect all other users on the same terminal server?</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64175#respond" onclick='return addComment.moveForm( "div-comment-64175", "64175", "respond", "13175" )' aria-label="Reply to PierreD">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="comment-64205">
+				<div id="div-comment-64205" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/f4483128e6b75b591d6bce2565e15c28.jpeg" srcset="https://secure.gravatar.com/avatar/f4483128e6b75b591d6bce2565e15c28?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">XiaoKa</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64205">
+			June 28, 2017 at 07:32</a>		</div>
+
+		<p>Can I have a list of countries which affected?</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64205#respond" onclick='return addComment.moveForm( "div-comment-64205", "64205", "respond", "13175" )' aria-label="Reply to XiaoKa">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+		<li class="comment even thread-even depth-1" id="comment-64235">
+				<div id="div-comment-64235" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/fbba4b6b6b27931e424fe5a1f80f701f.jpeg" srcset="https://secure.gravatar.com/avatar/fbba4b6b6b27931e424fe5a1f80f701f?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">SKRaigiri</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64235">
+			June 28, 2017 at 08:25</a>		</div>
+
+		<p>I use Symantec End Point Protection on my servers. How to secure my
+ Windows Server 2008R2 ? Are there any specific KB articles to be 
+installed for this attack?</p>
+<p>Please share me the details.</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64235#respond" onclick='return addComment.moveForm( "div-comment-64235", "64235", "respond", "13175" )' aria-label="Reply to SKRaigiri">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="comment-64236">
+				<div id="div-comment-64236" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/d9116c5d3a055baf34236201293528d3.jpeg" srcset="https://secure.gravatar.com/avatar/d9116c5d3a055baf34236201293528d3?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">Maik</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64236">
+			June 28, 2017 at 08:28</a>		</div>
+
+		<p>Great technical details. Our company is free of “not-petya”. So, 
+everyone speak about the “kill switch” or better “pre-vaccination”. But 
+unfortunately, for me is still unclear on which code row or how it was 
+found out that the file “perfc” with read-only attribute can prevent the
+ encryption.  =)</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64236#respond" onclick='return addComment.moveForm( "div-comment-64236", "64236", "respond", "13175" )' aria-label="Reply to Maik">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+		<li class="comment even thread-even depth-1" id="comment-64245">
+				<div id="div-comment-64245" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/66502f3d8ed313909277561896ff6db8.jpeg" srcset="https://secure.gravatar.com/avatar/66502f3d8ed313909277561896ff6db8?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">Brent Jones</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64245">
+			June 28, 2017 at 08:47</a>		</div>
+
+		<p>Excellent write-up. You are doing great work and communicating well.</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64245#respond" onclick='return addComment.moveForm( "div-comment-64245", "64245", "respond", "13175" )' aria-label="Reply to Brent Jones">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="comment-64255">
+				<div id="div-comment-64255" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/cc1557bbb777c4754c258dbb24e41e16.jpeg" srcset="https://secure.gravatar.com/avatar/cc1557bbb777c4754c258dbb24e41e16?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">chris</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64255">
+			June 28, 2017 at 09:27</a>		</div>
+
+		<p>What are the 64 countries?</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64255#respond" onclick='return addComment.moveForm( "div-comment-64255", "64255", "respond", "13175" )' aria-label="Reply to chris">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+		<li class="comment even thread-even depth-1 parent" id="comment-64285">
+				<div id="div-comment-64285" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/5002d3fc41872890b3a88dfb2399ccfe.png" srcset="https://secure.gravatar.com/avatar/5002d3fc41872890b3a88dfb2399ccfe?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">codeman38</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64285">
+			June 28, 2017 at 10:34</a>		</div>
+
+		<p>Not surprisingly, those hash codes correspond to process names from Kaspersky and Norton, respectively:</p>
+<p>2e214b44 = avp.exe<br>
+6403527e = ccSvcHst.exe<br>
+651b3005 = NS.exe</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64285#respond" onclick='return addComment.moveForm( "div-comment-64285", "64285", "respond", "13175" )' aria-label="Reply to codeman38">Reply</a></div>
+				</div>
+		<ol class="children">
+		<li class="comment odd alt depth-2" id="comment-64655">
+				<div id="div-comment-64655" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/4fef8b6e0465a72559298f74a38deee7.jpeg" srcset="https://secure.gravatar.com/avatar/4fef8b6e0465a72559298f74a38deee7?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">Jacob</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64655">
+			June 29, 2017 at 06:58</a>		</div>
+
+		<p>And since their homebrewed hash function is not collision 
+resistant, here are some other processes that generate the same hashes:</p>
+<p>G6b_9.exe<br>
+J6b_6.exe<br>
+K6b_5.exe<br>
+N6b_2.exe<br>
+O6b_1.exe<br>
+RhFjz.exe<br>
+26b_N.exe<br>
+36b_M.exe<br>
+66b_J.exe<br>
+76b_I.exe<br>
+_iyLdA.exe<br>
+_qcqu6.exe<br>
+_yyLdQ.exe<br>
+_IyLda.exe<br>
+_YyLdq.exe<br>
+_1cquv.exe<br>
+avks6L.exe<br>
+cn9d08.exe<br>
+cqcqI6.exe<br>
+c1cqIv.exe<br>
+dwoqL0.exe<br>
+d7oqLp.exe<br>
+epoqK5.exe<br>
+etoqK1.exe<br>
+e4oqKq.exe</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64655#respond" onclick='return addComment.moveForm( "div-comment-64655", "64655", "respond", "13175" )' aria-label="Reply to Jacob">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+		<li class="comment even depth-2" id="comment-64825">
+				<div id="div-comment-64825" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/f0ae82751b842c4cb79bbe01aa118fc3.png" srcset="https://secure.gravatar.com/avatar/f0ae82751b842c4cb79bbe01aa118fc3?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">Ankit</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64825">
+			June 30, 2017 at 02:35</a>		</div>
+
+		<p>But it does nothing after checking avp.exe (not sure why)</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64825#respond" onclick='return addComment.moveForm( "div-comment-64825", "64825", "respond", "13175" )' aria-label="Reply to Ankit">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+</ol><!-- .children -->
+</li><!-- #comment-## -->
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="comment-64295">
+				<div id="div-comment-64295" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/6eede732d454ac8f62483e6c9ade4fc3.jpeg" srcset="https://secure.gravatar.com/avatar/6eede732d454ac8f62483e6c9ade4fc3?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">Yevgeniy</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64295">
+			June 28, 2017 at 10:39</a>		</div>
+
+		<p>Thanks a lot.Very helpful</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64295#respond" onclick='return addComment.moveForm( "div-comment-64295", "64295", "respond", "13175" )' aria-label="Reply to Yevgeniy">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+		<li class="comment byuser comment-author-yannara even thread-even depth-1 parent" id="comment-64315">
+				<div id="div-comment-64315" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/avatar_008.jpg" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn"><a href="https://social.technet.microsoft.com/profile/yannara" rel="external nofollow" class="url">yannara</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64315">
+			June 28, 2017 at 11:24</a>		</div>
+
+		<p>2 files in C:\Windows and 2 files on C:\Users (C:\Programdata)). 
+Could we rely on Applocker here, if user has no Admin rights? (lets 
+imagine we don´t wait for AV definitions).</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64315#respond" onclick='return addComment.moveForm( "div-comment-64315", "64315", "respond", "13175" )' aria-label="Reply to yannara">Reply</a></div>
+				</div>
+		<ol class="children">
+		<li class="comment odd alt depth-2" id="comment-64546">
+				<div id="div-comment-64546" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/485afeb6196b441a384389230f8185fa.jpeg" srcset="https://secure.gravatar.com/avatar/485afeb6196b441a384389230f8185fa?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">Henning</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64546">
+			June 29, 2017 at 02:49</a>		</div>
+
+		<p>If user has admin rights, I’d say all bets are off.</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64546#respond" onclick='return addComment.moveForm( "div-comment-64546", "64546", "respond", "13175" )' aria-label="Reply to Henning">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+</ol><!-- .children -->
+</li><!-- #comment-## -->
+		<li class="comment byuser comment-author-yuriy-marushchenko even thread-odd thread-alt depth-1 parent" id="comment-64345">
+				<div id="div-comment-64345" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/avatar_005.jpg" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn"><a href="https://social.technet.microsoft.com/profile/Yuriy+Marushchenko" rel="external nofollow" class="url">Yuriy Marushchenko</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64345">
+			June 28, 2017 at 11:38</a>		</div>
+
+		<p>Why does Windows allow modification of system drive’s MBR? Are GPT disks affected by the virus too?</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64345#respond" onclick='return addComment.moveForm( "div-comment-64345", "64345", "respond", "13175" )' aria-label="Reply to Yuriy Marushchenko">Reply</a></div>
+				</div>
+		<ol class="children">
+		<li class="comment odd alt depth-2" id="comment-64495">
+				<div id="div-comment-64495" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/691c2ca2447d6d48c725c18bded44421.jpeg" srcset="https://secure.gravatar.com/avatar/691c2ca2447d6d48c725c18bded44421?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">Darren Starr</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64495">
+			June 28, 2017 at 20:44</a>		</div>
+
+		<p>Read the article. MBR overwrite requires SeDebugPrivilege. Same as fdisk and diskpart.</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64495#respond" onclick='return addComment.moveForm( "div-comment-64495", "64495", "respond", "13175" )' aria-label="Reply to Darren Starr">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+</ol><!-- .children -->
+</li><!-- #comment-## -->
+		<li class="comment even thread-even depth-1" id="comment-64365">
+				<div id="div-comment-64365" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/9638d454c6905d5867af180ceb55aeed.jpeg" srcset="https://secure.gravatar.com/avatar/9638d454c6905d5867af180ceb55aeed?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">MP</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64365">
+			June 28, 2017 at 12:15</a>		</div>
+
+		<p>No mention of Credential Guard as another layer of defense?</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64365#respond" onclick='return addComment.moveForm( "div-comment-64365", "64365", "respond", "13175" )' aria-label="Reply to MP">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="comment-64376">
+				<div id="div-comment-64376" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/617853563d043ec220ffc392bb5e533d.jpeg" srcset="https://secure.gravatar.com/avatar/617853563d043ec220ffc392bb5e533d?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">Dianne Blo</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64376">
+			June 28, 2017 at 13:07</a>		</div>
+
+		<p>We have been attacked. The phone no. given is 844-438-0289. Is this a Microsoft help message?</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64376#respond" onclick='return addComment.moveForm( "div-comment-64376", "64376", "respond", "13175" )' aria-label="Reply to Dianne Blo">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+		<li class="comment even thread-even depth-1" id="comment-64406">
+				<div id="div-comment-64406" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/3b5e21269d8945ea40e624fd54a7aa79.jpeg" srcset="https://secure.gravatar.com/avatar/3b5e21269d8945ea40e624fd54a7aa79?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">Javier Mariani</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64406">
+			June 28, 2017 at 13:23</a>		</div>
+
+		<p>Thanks for the information<br>
+Please, could you confirm if Office versions affected with CVE-2017-0199 are vulnerables too?</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64406#respond" onclick='return addComment.moveForm( "div-comment-64406", "64406", "respond", "13175" )' aria-label="Reply to Javier Mariani">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+		<li class="comment byuser comment-author-sumanrai odd alt thread-odd thread-alt depth-1" id="comment-64425">
+				<div id="div-comment-64425" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/avatar_006.jpg" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn"><a href="https://social.technet.microsoft.com/profile/Suman+Rai" rel="external nofollow" class="url">Suman Rai</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64425">
+			June 28, 2017 at 13:25</a>		</div>
+
+		<p>Is there any Microsoft Updates available ?</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64425#respond" onclick='return addComment.moveForm( "div-comment-64425", "64425", "respond", "13175" )' aria-label="Reply to Suman Rai">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+		<li class="comment even thread-even depth-1 parent" id="comment-64466">
+				<div id="div-comment-64466" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/a978d53b159561b19ef4075db932103a.jpeg" srcset="https://secure.gravatar.com/avatar/a978d53b159561b19ef4075db932103a?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">Damian Menscher</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64466">
+			June 28, 2017 at 15:20</a>		</div>
+
+		<p>The RSA key appears to be 2048 bits, not 800 bits as the article 
+claims.  The author appears to have read 0x101 as a decimal number of 
+bytes, rather than correctly interpreting it in hex as 256 bytes.  (This
+ is relevant because an 800-bit RSA key is plausibly crackable, while a 
+2048-bit key is not.)</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64466#respond" onclick='return addComment.moveForm( "div-comment-64466", "64466", "respond", "13175" )' aria-label="Reply to Damian Menscher">Reply</a></div>
+				</div>
+		<ol class="children">
+		<li class="comment odd alt depth-2" id="comment-64605">
+				<div id="div-comment-64605" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/c65878f8a95ad39905efd9c4cdae485d.jpeg" srcset="https://secure.gravatar.com/avatar/c65878f8a95ad39905efd9c4cdae485d?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">Blazej Miga</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64605">
+			June 29, 2017 at 05:58</a>		</div>
+
+		<p>0x800 bits = 2048 <img draggable="false" class="emoji" alt="🙂" src="test_microsoft_hashes_files/1f642.svg"></p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64605#respond" onclick='return addComment.moveForm( "div-comment-64605", "64605", "respond", "13175" )' aria-label="Reply to Blazej Miga">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+		<li class="comment even depth-2" id="comment-64726">
+				<div id="div-comment-64726" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/2a544f5765ed4b2752fdf9ec8501bcfd.jpeg" srcset="https://secure.gravatar.com/avatar/2a544f5765ed4b2752fdf9ec8501bcfd?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">neox</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64726">
+			June 29, 2017 at 11:23</a>		</div>
+
+		<p>thanks, fixed.</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64726#respond" onclick='return addComment.moveForm( "div-comment-64726", "64726", "respond", "13175" )' aria-label="Reply to neox">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+		<li class="comment byuser comment-author-msft-mmpc bypostauthor odd alt depth-2" id="comment-64765">
+				<div id="div-comment-64765" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/avatar_004.jpg" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn"><a href="https://social.technet.microsoft.com/profile/msft-mmpc" rel="external nofollow" class="url">msft-mmpc</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64765">
+			June 29, 2017 at 17:04</a>		</div>
+
+		<p>Thanks for pointing out. We’ve fixed this.</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64765#respond" onclick='return addComment.moveForm( "div-comment-64765", "64765", "respond", "13175" )' aria-label="Reply to msft-mmpc">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+</ol><!-- .children -->
+</li><!-- #comment-## -->
+		<li class="comment byuser comment-author-teusrenes even thread-odd thread-alt depth-1" id="comment-64476">
+				<div id="div-comment-64476" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/avatar_009.jpg" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn"><a href="https://social.technet.microsoft.com/profile/Teus+Renes" rel="external nofollow" class="url">Teus Renes</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64476">
+			June 28, 2017 at 16:01</a>		</div>
+
+		<p>Clear and Concise post, really helpfull</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64476#respond" onclick='return addComment.moveForm( "div-comment-64476", "64476", "respond", "13175" )' aria-label="Reply to Teus Renes">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+		<li class="comment odd alt thread-even depth-1" id="comment-64497">
+				<div id="div-comment-64497" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/691c2ca2447d6d48c725c18bded44421.jpeg" srcset="https://secure.gravatar.com/avatar/691c2ca2447d6d48c725c18bded44421?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">Darren Starr</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64497">
+			June 28, 2017 at 20:45</a>		</div>
+
+		<p>Which decompiler/disassembler are you using? IDAPro?</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64497#respond" onclick='return addComment.moveForm( "div-comment-64497", "64497", "respond", "13175" )' aria-label="Reply to Darren Starr">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+		<li class="comment even thread-odd thread-alt depth-1" id="comment-64515">
+				<div id="div-comment-64515" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/76f88f185b69e46054468658754236db.jpeg" srcset="https://secure.gravatar.com/avatar/76f88f185b69e46054468658754236db?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">Archana Sinha</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64515">
+			June 28, 2017 at 23:06</a>		</div>
+
+		<p>Thank you for deep analysis and process deciding details!!!</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64515#respond" onclick='return addComment.moveForm( "div-comment-64515", "64515", "respond", "13175" )' aria-label="Reply to Archana Sinha">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+		<li class="comment odd alt thread-even depth-1" id="comment-64525">
+				<div id="div-comment-64525" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/d6625a0038850c5963f96e2b3638934e.jpeg" srcset="https://secure.gravatar.com/avatar/d6625a0038850c5963f96e2b3638934e?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">Llallum Victoria</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64525">
+			June 29, 2017 at 01:43</a>		</div>
+
+		<p>Good job!</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64525#respond" onclick='return addComment.moveForm( "div-comment-64525", "64525", "respond", "13175" )' aria-label="Reply to Llallum Victoria">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+		<li class="comment even thread-odd thread-alt depth-1" id="comment-64535">
+				<div id="div-comment-64535" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/83fa0940213361a93b0c70536f17da55.jpeg" srcset="https://secure.gravatar.com/avatar/83fa0940213361a93b0c70536f17da55?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">Michael Nielsen</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64535">
+			June 29, 2017 at 01:54</a>		</div>
+
+		<p>Great info, Thank you</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64535#respond" onclick='return addComment.moveForm( "div-comment-64535", "64535", "respond", "13175" )' aria-label="Reply to Michael Nielsen">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+		<li class="comment odd alt thread-even depth-1" id="comment-64536">
+				<div id="div-comment-64536" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/8eccfac9ab3e414d363833f8993f278f.jpeg" srcset="https://secure.gravatar.com/avatar/8eccfac9ab3e414d363833f8993f278f?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">Michael Ukolov</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64536">
+			June 29, 2017 at 02:36</a>		</div>
+
+		<p>Oh my god..<br>
+Enough to blame already another soft, which is not involved in all this.<br>
+It would be better to take care of security in your OS. Why OS X with M.E.Doc is not suffer?</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64536#respond" onclick='return addComment.moveForm( "div-comment-64536", "64536", "respond", "13175" )' aria-label="Reply to Michael Ukolov">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+		<li class="comment even thread-odd thread-alt depth-1" id="comment-64566">
+				<div id="div-comment-64566" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/26aca5da3134cad0bf04b9df04efaa52.jpeg" srcset="https://secure.gravatar.com/avatar/26aca5da3134cad0bf04b9df04efaa52?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">anon</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64566">
+			June 29, 2017 at 03:37</a>		</div>
+
+		<p>does Microsoft have a comment on the “vaccine” found involving the 
+creation of a file named perfc (with no extension) in the C:\Windows\ 
+folder?</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64566#respond" onclick='return addComment.moveForm( "div-comment-64566", "64566", "respond", "13175" )' aria-label="Reply to anon">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+		<li class="comment odd alt thread-even depth-1" id="comment-64575">
+				<div id="div-comment-64575" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/3ac4e7bbb1ff8a657f506d37431692cc.jpeg" srcset="https://secure.gravatar.com/avatar/3ac4e7bbb1ff8a657f506d37431692cc?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">Santosh</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64575">
+			June 29, 2017 at 04:09</a>		</div>
+
+		<p>Thank you for the detailed Analysis.<br>
+what are all the mandatory patches we need to look for to ensure the Windows 7/Windows 10 systems are secure from these attacks.</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64575#respond" onclick='return addComment.moveForm( "div-comment-64575", "64575", "respond", "13175" )' aria-label="Reply to Santosh">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+		<li class="comment even thread-odd thread-alt depth-1 parent" id="comment-64595">
+				<div id="div-comment-64595" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/84b89662dfd3878a2b9f93a52a4ebd89.jpeg" srcset="https://secure.gravatar.com/avatar/84b89662dfd3878a2b9f93a52a4ebd89?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">Kalina</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64595">
+			June 29, 2017 at 04:32</a>		</div>
+
+		<p>Thanks for posting ! Very helpful indeed !</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64595#respond" onclick='return addComment.moveForm( "div-comment-64595", "64595", "respond", "13175" )' aria-label="Reply to Kalina">Reply</a></div>
+				</div>
+		<ol class="children">
+		<li class="comment odd alt depth-2" id="comment-64615">
+				<div id="div-comment-64615" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/c5170123f6c3f6c41dff60a71eb0c0b6.jpeg" srcset="https://secure.gravatar.com/avatar/c5170123f6c3f6c41dff60a71eb0c0b6?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">onur</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64615">
+			June 29, 2017 at 06:29</a>		</div>
+
+		<p>very informative. thanks!</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64615#respond" onclick='return addComment.moveForm( "div-comment-64615", "64615", "respond", "13175" )' aria-label="Reply to onur">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+</ol><!-- .children -->
+</li><!-- #comment-## -->
+		<li class="comment even thread-even depth-1" id="comment-64625">
+				<div id="div-comment-64625" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/4c83d523d0c1c850baecfe8925102d82.jpeg" srcset="https://secure.gravatar.com/avatar/4c83d523d0c1c850baecfe8925102d82?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">Sandy</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64625">
+			June 29, 2017 at 06:39</a>		</div>
+
+		<p>This is one of the best analysis I have seen yet. Well Done !</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64625#respond" onclick='return addComment.moveForm( "div-comment-64625", "64625", "respond", "13175" )' aria-label="Reply to Sandy">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+		<li class="comment byuser comment-author-whutchinson1 odd alt thread-odd thread-alt depth-1 parent" id="comment-64685">
+				<div id="div-comment-64685" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/avatar.jpg" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn"><a href="https://social.technet.microsoft.com/profile/mrhutch" rel="external nofollow" class="url">mrhutch</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64685">
+			June 29, 2017 at 07:50</a>		</div>
+
+		<p>What is Microsoft’s stance on the killswitch of placing a perfc 
+file in C:\Windows\System?   It only prevents the encryption but does 
+not prevent the system from propagating lateral infections or even 
+creating a DDOS situation on the system in question.   </p>
+<p>Would it be more prudent to enact a GPO containing a Sofware 
+Restriction policy to disallow this file from executing in the case that
+ it is present?</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64685#respond" onclick='return addComment.moveForm( "div-comment-64685", "64685", "respond", "13175" )' aria-label="Reply to mrhutch">Reply</a></div>
+				</div>
+		<ol class="children">
+		<li class="comment byuser comment-author-whutchinson1 even depth-2" id="comment-64695">
+				<div id="div-comment-64695" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/avatar.jpg" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn"><a href="https://social.technet.microsoft.com/profile/mrhutch" rel="external nofollow" class="url">mrhutch</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64695">
+			June 29, 2017 at 07:51</a>		</div>
+
+		<p>In the absence of updates and local protection tools of course which should serve as the first line of defense.</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64695#respond" onclick='return addComment.moveForm( "div-comment-64695", "64695", "respond", "13175" )' aria-label="Reply to mrhutch">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+</ol><!-- .children -->
+</li><!-- #comment-## -->
+		<li class="comment odd alt thread-even depth-1" id="comment-64736">
+				<div id="div-comment-64736" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/4de9dcb4b50ecad449e9133c93249115.jpeg" srcset="https://secure.gravatar.com/avatar/4de9dcb4b50ecad449e9133c93249115?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">flash</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64736">
+			June 29, 2017 at 14:03</a>		</div>
+
+		<p>MS17-010 patches doesn’t works, all computers W7. W2k8 with MS17-010 updates was infected.</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64736#respond" onclick='return addComment.moveForm( "div-comment-64736", "64736", "respond", "13175" )' aria-label="Reply to flash">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+		<li class="comment even thread-odd thread-alt depth-1" id="comment-64755">
+				<div id="div-comment-64755" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/5680ea5eb9bb859fd558ae38ae2eac38.jpeg" srcset="https://secure.gravatar.com/avatar/5680ea5eb9bb859fd558ae38ae2eac38?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">Jim Clausing</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64755">
+			June 29, 2017 at 16:20</a>		</div>
+
+		<p>Are you sure you have the functionality correct if the processes 
+are present? My analysis shows the other way around, that is, if 
+0x6403572E or 0x651B3005 are present, it won’t try to do network 
+propagation and if 0x2E214B44 is present it won’t attempt to encrypt 
+MBR/VBR.</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64755#respond" onclick='return addComment.moveForm( "div-comment-64755", "64755", "respond", "13175" )' aria-label="Reply to Jim Clausing">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+		<li class="comment odd alt thread-even depth-1" id="comment-64775">
+				<div id="div-comment-64775" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/36151b916dfc868a3d598a5c4ef099bf.jpeg" srcset="https://secure.gravatar.com/avatar/36151b916dfc868a3d598a5c4ef099bf?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">Deborah D. Pipes, CPA</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64775">
+			June 29, 2017 at 17:25</a>		</div>
+
+		<p>I’m about to the point of buying a MAC. My Outlook quit working 
+(Office 2010) @ 7 months ago. I’m a disabled senior. Can’t afford a 
+“team” to keep me running.</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64775#respond" onclick='return addComment.moveForm( "div-comment-64775", "64775", "respond", "13175" )' aria-label="Reply to Deborah D. Pipes, CPA">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+		<li class="comment even thread-odd thread-alt depth-1" id="comment-64787">
+				<div id="div-comment-64787" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/3aa3a80cc5ef3fa5327ec6b0f72af338.jpeg" srcset="https://secure.gravatar.com/avatar/3aa3a80cc5ef3fa5327ec6b0f72af338?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">Jim</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64787">
+			June 29, 2017 at 20:37</a>		</div>
+
+		<p>maybe MS should have been more proactive handling the reports of 
+these when they were first found back in 2011 instead of saying ‘eh, we 
+don’t care’  The Shadow broker security research group informed MS of 
+the exploit.</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64787#respond" onclick='return addComment.moveForm( "div-comment-64787", "64787", "respond", "13175" )' aria-label="Reply to Jim">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+		<li class="comment odd alt thread-even depth-1" id="comment-64917">
+				<div id="div-comment-64917" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/2c35352aef9962be87a3f86516f75370.jpeg" srcset="https://secure.gravatar.com/avatar/2c35352aef9962be87a3f86516f75370?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">Shane Creamer</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-64917">
+			June 30, 2017 at 09:55</a>		</div>
+
+		<p>Possible suggestion on the wording around blocking ports 139 and 
+445.  If those ports are blocked (as a last minute act of desperation) 
+then those reading the article should know that no-one can use file 
+sharing (no DFS-R, No home drives, no network drives. etc.)  Essentially
+ no access for a user to their data.</p>
+<p>The primary vector for these attacks are machines that are not 
+patched, and that have SMB 1.0 enabled.  If you disable SMB 1.0 the 
+primary vector for spreading the virus through the network is stopped.  
+The problem is that most companies are unwilling to disable SMB 1.0 
+because of some old, creaky iSCSI or NetApp filer device that is still 
+on the network that they won’t pay to upgrade to SMB 2.x or higher 
+capability.</p>
+<p>SMB 1.0 code is standard from Windows 95/NT 3.51 days and the lead 
+developer for that code has gone on record multiple times to say that 
+SMB 1.0 is an architecture created before the age of sophisticated 
+Pass-the-Hash or Pass the Kerberos token attacks.  If you want to see 
+these kinds of issues stop, please DISABLE SMB 1.0 on your Windows 
+Systems.  Windows 7/Server 2008 and newer use SMB 2.x or SMB 3.x code.  </p>
+<p>To disable SMBv1 on the SMB server, run the following PowerShell cmdlet:<br>
+Set-SmbServerConfiguration -EnableSMB1Protocol $false</p>
+<p><a href="https://blogs.technet.microsoft.com/filecab/2016/09/16/stop-using-smb1/" rel="nofollow">https://blogs.technet.microsoft.com/filecab/2016/09/16/stop-using-smb1/</a></p>
+<p>Hope this helps,<br>
+ShaneC</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=64917#respond" onclick='return addComment.moveForm( "div-comment-64917", "64917", "respond", "13175" )' aria-label="Reply to Shane Creamer">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+		<li class="comment even thread-odd thread-alt depth-1" id="comment-65065">
+				<div id="div-comment-65065" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/7fe53635500994c4734130827b081075.jpeg" srcset="https://secure.gravatar.com/avatar/7fe53635500994c4734130827b081075?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">Navin Rai</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-65065">
+			July 1, 2017 at 06:20</a>		</div>
+
+		<p>Thanks for sharing this article. I got to learn more new things. I`m glad to have this informative article.</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=65065#respond" onclick='return addComment.moveForm( "div-comment-65065", "65065", "respond", "13175" )' aria-label="Reply to Navin Rai">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+		<li class="comment odd alt thread-even depth-1" id="comment-65425">
+				<div id="div-comment-65425" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/98468d66e631e53feb0b040596503ba3.jpeg" srcset="https://secure.gravatar.com/avatar/98468d66e631e53feb0b040596503ba3?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">sunilkatariya</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-65425">
+			July 3, 2017 at 21:26</a>		</div>
+
+		<p>Thank you, detail information about this malware</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=65425#respond" onclick='return addComment.moveForm( "div-comment-65425", "65425", "respond", "13175" )' aria-label="Reply to sunilkatariya">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+		<li class="comment even thread-odd thread-alt depth-1" id="comment-65565">
+				<div id="div-comment-65565" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/1fb89ceaf6b14bcf71b405ce8640116b.jpeg" srcset="https://secure.gravatar.com/avatar/1fb89ceaf6b14bcf71b405ce8640116b?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">Cyril Tan</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-65565">
+			July 4, 2017 at 19:04</a>		</div>
+
+		<p>“This ransomware also uses the Windows Management Instrumentation 
+Command-line (WMIC) to find remote shares (using NetEnum/NetAdd) to 
+spread to. It uses either a duplicate token of the current user (for 
+existing connections), or a username/password combination (spreading 
+through legit tools).”</p>
+<p>I notice the above statement and would like to check on the fact that
+ if a patched machine is connected to an unpatched machine, what will 
+the implications be?</p>
+<p>Secondly, how does using either a duplicate token of the current user
+ (for existing connections), or a username/password combination work? I 
+don’t understand. Please educate me on this sentence as I would like to 
+know if the current Microsoft patches are sufficient?</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=65565#respond" onclick='return addComment.moveForm( "div-comment-65565", "65565", "respond", "13175" )' aria-label="Reply to Cyril Tan">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+		<li class="comment odd alt thread-even depth-1" id="comment-65815">
+				<div id="div-comment-65815" class="comment-body">
+				<div class="comment-author vcard">
+			<img alt="" src="test_microsoft_hashes_files/7fa12154d1aab80ae64d0c7918e3efc7.jpeg" srcset="https://secure.gravatar.com/avatar/7fa12154d1aab80ae64d0c7918e3efc7?s=112&amp;d=mm&amp;r=g 2x" class="avatar avatar-56 photo" width="56" height="56">			<cite class="fn">Jianjun Yang</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/#comment-65815">
+			July 6, 2017 at 03:41</a>		</div>
+
+		<p>My countries’ local MS Skype update newly use port 445 as main port a few days ago. I dare not use Skype any more.</p>
+
+		<div class="reply"><a rel="nofollow" class="comment-reply-link" href="https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/?replytocom=65815#respond" onclick='return addComment.moveForm( "div-comment-65815", "65815", "respond", "13175" )' aria-label="Reply to Jianjun Yang">Reply</a></div>
+				</div>
+		</li><!-- #comment-## -->
+		</ol><!-- .comment-list -->
+
+		<div class="navigation pagination">
+					</div>
+
+	
+	
+</div><!-- .comments-area -->
+	</div><!-- #primary -->
+	<a class="screen-reader-shortcut" href="#primary" tabindex="1">Skip to main content</a>
+
+<div id="secondary" class="sidebar col-sm-3">
+	<div id="sidebar-widget-area" class="sidebar-widget-area" role="complementary">
+		<div class="widget sfmsb_widget"><div class="sfmsb-follow-social-buttons sfmsb-under sfmsb-circle 40 sfmsb-horizontal"><h2 class="widget-title">Follow Us</h2><a title="RSS Feed" aria-label="RSS Feed" target="_blank" href="https://blogs.technet.microsoft.com/mmpc/feed/"><span class="sfmsb-icon-feed sfmsb-circle" style="color:#ffa500;font-size:40px;" data-color="#ffa500"></span></a><div class="sfmsb-clearfix"></div></div></div>		<aside id="recent-posts-2" class="widget widget_recent_entries">		<h2 class="widget-title">Recent posts</h2>		<ul>
+					<li>
+				<a href="https://blogs.technet.microsoft.com/mmpc/2017/09/12/exploit-for-cve-2017-8759-detected-and-neutralized/">Exploit for CVE-2017-8759 detected and neutralized</a>
+						</li>
+					<li>
+				<a href="https://blogs.technet.microsoft.com/mmpc/2017/09/06/ransomware-1h-2017-review-global-outbreaks-reinforce-the-value-of-security-hygiene/">Ransomware 1H 2017 review: Global outbreaks reinforce the value of security hygiene</a>
+						</li>
+					<li>
+				<a href="https://blogs.technet.microsoft.com/mmpc/2017/08/08/microsoft-to-remove-wosign-and-startcom-certificates-in-windows-10/">Microsoft to remove WoSign and StartCom certificates in Windows 10</a>
+						</li>
+					<li>
+				<a href="https://blogs.technet.microsoft.com/mmpc/2017/08/07/links-in-phishing-like-emails-lead-to-tech-support-scam/">Links in phishing-like emails lead to tech support scam</a>
+						</li>
+					<li>
+				<a href="https://blogs.technet.microsoft.com/mmpc/2017/08/03/windows-defender-atp-machine-learning-detecting-new-and-unusual-breach-activity/">Windows Defender ATP machine learning: Detecting new and unusual breach activity</a>
+						</li>
+				</ul>
+		</aside>		<aside id="text-7" class="widget widget_text"><h2 class="widget-title">Social</h2>			<div class="textwidget"><div id="follow-us-links">
+<ul>
+<li class="twitter"><a href="https://twitter.com/msftmmpc" title="@msftmmpc">@msftmmpc</a></li>
+<li class="facebook"><a href="https://www.facebook.com/msftmmpc" title="facebook">MMPC</a></li>
+<li class="linkedin"><a href="https://www.linkedin.com/groups?gid=3660709&amp;trk=myg_ugrp_ovr" title="Security@Microsoft">Security@Microsoft</a></li>
+<li class="blog-rss"><a href="http://blogs.technet.com/b/mmpc/rss.aspx" title="RSS for Posts">RSS</a></li>
+<li class="newsletter"><a href="http://technet.microsoft.com/en-us/security/cc307424.aspx" title="Microsoft Security Newsletter">Security Newsletter</a></li>
+</ul>
+</div></div>
+		</aside><aside id="text-13" class="widget widget_text"><h2 class="widget-title">About</h2>			<div class="textwidget"><a href="https://blogs.technet.microsoft.com/mmpc/about/" target="_blank"><img src="test_microsoft_hashes_files/microsoft-windows-security.png" width="50%"></a></div>
+		</aside><aside id="categories-6" class="widget widget_categories"><h2 class="widget-title">Categories</h2>		<ul>
+	<li class="cat-item cat-item-1805"><a href="https://blogs.technet.microsoft.com/mmpc/category/research/apt/" title="Blogs from the Windows Defender Advanced Threat Hunting team">Advanced persistent threats</a> (20)
+</li>
+	<li class="cat-item cat-item-2245"><a href="https://blogs.technet.microsoft.com/mmpc/category/technologies/cloud-protection/">Cloud protection</a> (5)
+</li>
+	<li class="cat-item cat-item-5295"><a href="https://blogs.technet.microsoft.com/mmpc/category/technologies/device-guard/">Device Guard</a> (1)
+</li>
+	<li class="cat-item cat-item-2225"><a href="https://blogs.technet.microsoft.com/mmpc/category/research/exploits/">Exploits</a> (13)
+</li>
+	<li class="cat-item cat-item-4326"><a href="https://blogs.technet.microsoft.com/mmpc/category/research/java-malware/">Java malware</a> (1)
+</li>
+	<li class="cat-item cat-item-1875"><a href="https://blogs.technet.microsoft.com/mmpc/category/research/javascript/">JavaScript malware</a> (5)
+</li>
+	<li class="cat-item cat-item-1434"><a href="https://blogs.technet.microsoft.com/mmpc/category/research/macro-malware/" title="Macro-based malware can use macros in Office documents to download and run malicious files and other malware.">Macro-based malware</a> (15)
+</li>
+	<li class="cat-item cat-item-1925"><a href="https://blogs.technet.microsoft.com/mmpc/category/research/malvertising-campaign/">Malvertising</a> (2)
+</li>
+	<li class="cat-item cat-item-5305"><a href="https://blogs.technet.microsoft.com/mmpc/category/technologies/microsoft-edge/">Microsoft Edge</a> (2)
+</li>
+	<li class="cat-item cat-item-1935"><a href="https://blogs.technet.microsoft.com/mmpc/category/technologies/msrt/">MSRT</a> (38)
+</li>
+	<li class="cat-item cat-item-1717"><a href="https://blogs.technet.microsoft.com/mmpc/category/technologies/objective-criteria/">Objective Criteria</a> (19)
+</li>
+	<li class="cat-item cat-item-1443"><a href="https://blogs.technet.microsoft.com/mmpc/category/technologies/office/">Office</a> (5)
+</li>
+	<li class="cat-item cat-item-5306"><a href="https://blogs.technet.microsoft.com/mmpc/category/technologies/office-365-advanced-threat-protection/">Office 365 Advanced Threat Protection</a> (3)
+</li>
+	<li class="cat-item cat-item-3665"><a href="https://blogs.technet.microsoft.com/mmpc/category/research/phishing/">Phishing</a> (3)
+</li>
+	<li class="cat-item cat-item-2235"><a href="https://blogs.technet.microsoft.com/mmpc/category/technologies/powershell/">PowerShell</a> (1)
+</li>
+	<li class="cat-item cat-item-1282"><a href="https://blogs.technet.microsoft.com/mmpc/category/research/ransomware/" title="These blogs talk about various ransomware families - a type of malware that can prevent access to your files and demand payment.">Ransomware</a> (44)
+</li>
+	<li class="cat-item cat-item-2255"><a href="https://blogs.technet.microsoft.com/mmpc/category/research/rogue/">Rogue</a> (2)
+</li>
+	<li class="cat-item cat-item-1452"><a href="https://blogs.technet.microsoft.com/mmpc/category/research/spam/">Spam</a> (13)
+</li>
+	<li class="cat-item cat-item-3005"><a href="https://blogs.technet.microsoft.com/mmpc/category/research/supportscam/">Tech support scam</a> (4)
+</li>
+	<li class="cat-item cat-item-1511"><a href="https://blogs.technet.microsoft.com/mmpc/category/research/trojan/">Trojan</a> (26)
+</li>
+	<li class="cat-item cat-item-1"><a href="https://blogs.technet.microsoft.com/mmpc/category/uncategorized/">Uncategorized</a> (472)
+</li>
+	<li class="cat-item cat-item-1181"><a href="https://blogs.technet.microsoft.com/mmpc/category/research/unwanted-software/">Unwanted software</a> (22)
+</li>
+	<li class="cat-item cat-item-2076"><a href="https://blogs.technet.microsoft.com/mmpc/category/technologies/windows-10/">Windows 10</a> (39)
+</li>
+	<li class="cat-item cat-item-3685"><a href="https://blogs.technet.microsoft.com/mmpc/category/technologies/creators-update/">Windows 10 Creators Update</a> (19)
+</li>
+	<li class="cat-item cat-item-5275"><a href="https://blogs.technet.microsoft.com/mmpc/category/technologies/fall-creators-update/">Windows 10 Fall Creators Update</a> (2)
+</li>
+	<li class="cat-item cat-item-5285"><a href="https://blogs.technet.microsoft.com/mmpc/category/technologies/windows-10-s/">Windows 10 S</a> (2)
+</li>
+	<li class="cat-item cat-item-1785"><a href="https://blogs.technet.microsoft.com/mmpc/category/technologies/windows-defender-atp/">Windows Defender ATP</a> (29)
+</li>
+	<li class="cat-item cat-item-2066"><a href="https://blogs.technet.microsoft.com/mmpc/category/technologies/windows-defender/">Windows Defender AV</a> (44)
+</li>
+	<li class="cat-item cat-item-2135"><a href="https://blogs.technet.microsoft.com/mmpc/category/research/" title="Advanced threats, malware and malicious software research">Windows Defender Security Intelligence</a> (126)
+</li>
+	<li class="cat-item cat-item-1866"><a href="https://blogs.technet.microsoft.com/mmpc/category/tips/" title="Tips and guidance on using Windows security products">Windows security product tips</a> (46)
+</li>
+	<li class="cat-item cat-item-2145"><a href="https://blogs.technet.microsoft.com/mmpc/category/technologies/" title="New and updated technologies in Windows security software">Windows security technologies</a> (59)
+</li>
+	<li class="cat-item cat-item-2275"><a href="https://blogs.technet.microsoft.com/mmpc/category/research/worms/">Worms</a> (4)
+</li>
+		</ul>
+</aside><aside id="tag_cloud-6" class="widget widget_tag_cloud"><h2 class="widget-title">Popular Tags</h2><div class="tagcloud"><a href="https://blogs.technet.microsoft.com/mmpc/tag/research/" class="tag-link-4 tag-link-position-1" title="102 topics" style="font-size: 14px;">research</a>
+<a href="https://blogs.technet.microsoft.com/mmpc/tag/msrt/" class="tag-link-2 tag-link-position-2" title="91 topics" style="font-size: 14px;">MSRT</a>
+<a href="https://blogs.technet.microsoft.com/mmpc/tag/telemetry/" class="tag-link-3 tag-link-position-3" title="43 topics" style="font-size: 14px;">telemetry</a>
+<a href="https://blogs.technet.microsoft.com/mmpc/tag/spam/" class="tag-link-5 tag-link-position-4" title="36 topics" style="font-size: 14px;">spam</a>
+<a href="https://blogs.technet.microsoft.com/mmpc/tag/rogue/" class="tag-link-6 tag-link-position-5" title="32 topics" style="font-size: 14px;">rogue</a>
+<a href="https://blogs.technet.microsoft.com/mmpc/tag/windows-defender/" class="tag-link-361 tag-link-position-6" title="30 topics" style="font-size: 14px;">Windows Defender</a>
+<a href="https://blogs.technet.microsoft.com/mmpc/tag/windows-10/" class="tag-link-431 tag-link-position-7" title="28 topics" style="font-size: 14px;">Windows 10</a>
+<a href="https://blogs.technet.microsoft.com/mmpc/tag/ransomware/" class="tag-link-246 tag-link-position-8" title="27 topics" style="font-size: 14px;">ransomware</a>
+<a href="https://blogs.technet.microsoft.com/mmpc/tag/windows-defender-atp/" class="tag-link-1835 tag-link-position-9" title="26 topics" style="font-size: 14px;">Windows Defender ATP</a>
+<a href="https://blogs.technet.microsoft.com/mmpc/tag/malware-research/" class="tag-link-108 tag-link-position-10" title="22 topics" style="font-size: 14px;">malware research</a>
+<a href="https://blogs.technet.microsoft.com/mmpc/tag/sir/" class="tag-link-11 tag-link-position-11" title="20 topics" style="font-size: 14px;">SIR</a>
+<a href="https://blogs.technet.microsoft.com/mmpc/tag/mmpc/" class="tag-link-97 tag-link-position-12" title="19 topics" style="font-size: 14px;">MMPC</a>
+<a href="https://blogs.technet.microsoft.com/mmpc/tag/exploits/" class="tag-link-46 tag-link-position-13" title="19 topics" style="font-size: 14px;">exploits</a>
+<a href="https://blogs.technet.microsoft.com/mmpc/tag/guidance/" class="tag-link-10 tag-link-position-14" title="19 topics" style="font-size: 14px;">guidance</a>
+<a href="https://blogs.technet.microsoft.com/mmpc/tag/microsoft-security-essentials/" class="tag-link-59 tag-link-position-15" title="16 topics" style="font-size: 14px;">Microsoft Security Essentials</a>
+<a href="https://blogs.technet.microsoft.com/mmpc/tag/social-engineering/" class="tag-link-205 tag-link-position-16" title="14 topics" style="font-size: 14px;">social engineering</a>
+<a href="https://blogs.technet.microsoft.com/mmpc/tag/conference/" class="tag-link-8 tag-link-position-17" title="14 topics" style="font-size: 14px;">conference</a>
+<a href="https://blogs.technet.microsoft.com/mmpc/tag/windows-defender-antivirus/" class="tag-link-4255 tag-link-position-18" title="13 topics" style="font-size: 14px;">Windows Defender Antivirus</a>
+<a href="https://blogs.technet.microsoft.com/mmpc/tag/malware/" class="tag-link-189 tag-link-position-19" title="12 topics" style="font-size: 14px;">malware</a>
+<a href="https://blogs.technet.microsoft.com/mmpc/tag/microsoft-edge/" class="tag-link-1711 tag-link-position-20" title="12 topics" style="font-size: 14px;">Microsoft Edge</a></div>
+</aside><aside id="msdn-archive-widget-4" class="widget msdn-archive-widget"><h2 class="widget-title">Archives</h2>	<li><a href="https://blogs.technet.microsoft.com/mmpc/2017/09/">September 2017</a>&nbsp;(2)</li>
+	<li><a href="https://blogs.technet.microsoft.com/mmpc/2017/08/">August 2017</a>&nbsp;(3)</li>
+	<li><a href="https://blogs.technet.microsoft.com/mmpc/2017/07/">July 2017</a>&nbsp;(2)</li>
+	<li><a href="https://blogs.technet.microsoft.com/mmpc/2017/06/">June 2017</a>&nbsp;(10)</li>
+	<li><a href="https://blogs.technet.microsoft.com/mmpc/2017/05/">May 2017</a>&nbsp;(3)</li>
+	<li><a href="https://blogs.technet.microsoft.com/mmpc/2017/04/">April 2017</a>&nbsp;(2)</li>
+	<li><a href="https://blogs.technet.microsoft.com/mmpc/2017/03/">March 2017</a>&nbsp;(6)</li>
+	<li><a href="https://blogs.technet.microsoft.com/mmpc/2017/02/">February 2017</a>&nbsp;(3)</li>
+	<li><a href="https://blogs.technet.microsoft.com/mmpc/2017/01/">January 2017</a>&nbsp;(5)</li>
+	<li><a href="https://blogs.technet.microsoft.com/mmpc/2017/">All of 2017</a>&nbsp;(36)</li>
+	<li><a href="https://blogs.technet.microsoft.com/mmpc/2016/">All of 2016</a>&nbsp;(43)</li>
+	<li><a href="https://blogs.technet.microsoft.com/mmpc/2015/">All of 2015</a>&nbsp;(33)</li>
+	<li><a href="https://blogs.technet.microsoft.com/mmpc/2014/">All of 2014</a>&nbsp;(53)</li>
+	<li><a href="https://blogs.technet.microsoft.com/mmpc/2013/">All of 2013</a>&nbsp;(62)</li>
+	<li><a href="https://blogs.technet.microsoft.com/mmpc/2012/">All of 2012</a>&nbsp;(79)</li>
+	<li><a href="https://blogs.technet.microsoft.com/mmpc/2011/">All of 2011</a>&nbsp;(98)</li>
+	<li><a href="https://blogs.technet.microsoft.com/mmpc/2010/">All of 2010</a>&nbsp;(84)</li>
+	<li><a href="https://blogs.technet.microsoft.com/mmpc/2009/">All of 2009</a>&nbsp;(93)</li>
+	<li><a href="https://blogs.technet.microsoft.com/mmpc/2008/">All of 2008</a>&nbsp;(55)</li>
+</aside>	</div>
+</div><!-- #secondary -->
+</div><!-- .site-content -->
+
+<footer id="site-footer" class="site-footer row" role="contentinfo">
+	<div id="site-info" class="site-info">
+		<div id="footer-text" class="col-sm-4 col-sm-offset-6">
+			<span>
+				<a href="https://msdn.microsoft.com/dn529288">Privacy &amp; Cookies</a>
+			</span>
+			<span>
+				<a href="https://msdn.microsoft.com/cc300389">Terms of Use</a>
+			</span>
+			<span>
+				<a href="https://www.microsoft.com/en-us/legal/intellectualproperty/Trademarks/EN-US.aspx">Trademarks</a>
+			</span>
+		</div>
+		<div id="footer-far" class="col-sm-2">
+			<div id="footer-microsoft-logo">
+				<a href="https://www.microsoft.com/" aria-label="Microsoft Logo">
+					<svg id="footer-microsoft-logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 347 70.5" enable-background="new 0 0 347 70.5"><g fill="#fff"><path d="M39.5 44.6l-2.8 7.9h-.2c-.5-1.8-1.3-4.5-2.7-7.8l-15-37.7h-14.7v60h9.7v-37c0-2.3 0-5-.1-8.2-.1-1.6-.2-2.9-.3-3.8h.2c.5 2.3 1 4 1.4 5.1l18 43.8h6.8l17.9-44.2c.4-1 .8-3 1.2-4.7h.2c-.2 4.4-.4 8.4-.5 10.8v38.1h10.4v-60h-14.1l-15.4 37.7zM78.8 23.9h10.1v43h-10.1zM83.9 5.7c-1.7 0-3.1.6-4.3 1.7-1.2 1.1-1.8 2.5-1.8 4.2 0 1.6.6 3 1.8 4.1 1.2 1.1 2.6 1.6 4.3 1.6 1.7 0 3.2-.6 4.3-1.6 1.2-1.1 1.8-2.5 1.8-4.1 0-1.6-.6-3-1.8-4.2-1-1.2-2.5-1.7-4.3-1.7M124.7 23.5c-1.9-.4-3.8-.6-5.7-.6-4.6 0-8.8 1-12.3 3s-6.3 4.8-8.1 8.3c-1.9 3.6-2.8 7.7-2.8 12.4 0 4.1.9 7.8 2.7 11.1 1.8 3.3 4.3 5.9 7.6 7.7 3.2 1.8 6.9 2.7 11.1 2.7 4.8 0 8.9-1 12.2-2.9l.1-.1v-9.3l-.4.3c-1.5 1.1-3.2 2-4.9 2.6-1.8.6-3.4.9-4.8.9-4 0-7.2-1.2-9.5-3.7s-3.5-5.9-3.5-10.2c0-4.4 1.2-7.9 3.6-10.5 2.4-2.6 5.6-3.9 9.5-3.9 3.3 0 6.6 1.1 9.6 3.3l.4.3v-9.8l-.1-.1c-1.2-.6-2.8-1.1-4.7-1.5M158 23.2c-2.5 0-4.8.8-6.8 2.4-1.7 1.4-2.9 3.4-3.9 5.8h-.1v-7.4h-10.1v43h10.1v-22c0-3.7.8-6.8 2.5-9.1s3.9-3.5 6.5-3.5c.9 0 1.9.2 3 .4 1.1.3 1.9.6 2.4 1l.4.3v-10.2l-.2-.1c-.8-.4-2.1-.6-3.8-.6M185.5 22.9c-7.1 0-12.7 2.1-16.7 6.2s-6 9.8-6 16.9c0 6.7 2 12.1 5.9 16.1 3.9 3.9 9.2 5.9 15.8 5.9 6.9 0 12.4-2.1 16.4-6.3 4-4.2 6-9.8 6-16.7 0-6.8-1.9-12.3-5.7-16.2-3.7-3.9-9-5.9-15.7-5.9m8 33.1c-1.9 2.4-4.8 3.6-8.5 3.6s-6.6-1.2-8.7-3.7c-2.1-2.4-3.1-5.9-3.1-10.3 0-4.6 1.1-8.1 3.1-10.6 2.1-2.5 5-3.7 8.6-3.7 3.6 0 6.4 1.2 8.4 3.6 2 2.4 3.1 5.9 3.1 10.5s-1 8.2-2.9 10.6M229.3 41.7c-3.2-1.3-5.2-2.3-6.1-3.2-.8-.8-1.2-1.9-1.2-3.3 0-1.2.5-2.3 1.6-3.1 1.1-.8 2.5-1.2 4.4-1.2 1.7 0 3.5.3 5.2.8 1.7.5 3.3 1.2 4.5 2.1l.4.3v-9.4l-.2-.1c-1.2-.5-2.7-.9-4.6-1.3-1.9-.3-3.6-.5-5-.5-4.8 0-8.8 1.2-11.9 3.7-3.1 2.4-4.6 5.7-4.6 9.5 0 2 .3 3.8 1 5.3s1.7 2.9 3.1 4c1.4 1.1 3.4 2.3 6.2 3.5 2.3 1 4.1 1.8 5.2 2.4 1.1.6 1.8 1.3 2.3 1.9.4.6.6 1.4.6 2.4 0 2.9-2.2 4.3-6.6 4.3-1.7 0-3.5-.3-5.6-1-2.1-.7-4-1.7-5.7-2.9l-.4-.3v9.9l.2.1c1.5.7 3.3 1.2 5.4 1.7 2.2.4 4.1.7 5.8.7 5.2 0 9.5-1.2 12.5-3.7 3.1-2.5 4.7-5.7 4.7-9.8 0-2.9-.8-5.4-2.5-7.4-1.8-2-4.7-3.8-8.7-5.4M267.6 22.9c-7.1 0-12.7 2.1-16.7 6.2s-6 9.8-6 16.9c0 6.7 2 12.1 5.9 16.1 3.9 3.9 9.2 5.9 15.8 5.9 6.9 0 12.4-2.1 16.4-6.3 4-4.2 6-9.8 6-16.7 0-6.8-1.9-12.3-5.7-16.2-3.8-3.9-9.1-5.9-15.7-5.9m8 33.1c-1.9 2.4-4.8 3.6-8.5 3.6s-6.6-1.2-8.7-3.7c-2.1-2.4-3.1-5.9-3.1-10.3 0-4.6 1.1-8.1 3.1-10.6 2.1-2.5 5-3.7 8.6-3.7 3.5 0 6.4 1.2 8.4 3.6 2 2.4 3.1 5.9 3.1 10.5s-1 8.2-2.9 10.6"></path><path d="M342.9 32.2v-8.2h-10.2v-12.9l-.3.1-9.6 2.9-.2.1v9.7h-15.2v-5.4c0-2.5.6-4.4 1.7-5.7 1.1-1.3 2.7-1.9 4.7-1.9 1.4 0 2.9.3 4.5 1l.4.2v-8.7l-.2-.1c-1.4-.5-3.3-.8-5.7-.8-3 0-5.7.7-8.1 1.9-2.4 1.3-4.2 3.1-5.5 5.5-1.3 2.3-2 5-2 8v6h-7.2v8.2h7.1v34.8h10.2v-34.7h15.2v22.1c0 9.1 4.3 13.7 12.8 13.7 1.4 0 2.9-.2 4.3-.5 1.5-.3 2.6-.7 3.2-1l.1-.1v-8.3l-.4.3c-.6.4-1.2.7-2.1.9-.8.2-1.5.3-2 .3-2 0-3.4-.5-4.4-1.6-.9-1.1-1.4-2.9-1.4-5.5v-20.3h10.3z"></path></g></svg>
+				</a>
+			</div>
+			<div id="copyright">
+				© 2017 Microsoft
+			</div>
+		</div>
+	</div><!-- .site-info -->
+</footer><!-- .site-footer -->
+
+</div><!-- .site -->
+
+	<script type="text/javascript">
+	jQuery(document).ready(function($){
+		$login_link = $( 'a[href*="wp-login.php?"]' );
+				$login_link.on( 'click', function( evt ) {
+			// evt.preventDefault();
+						// console.log( 'cookie-set', '/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/' );
+			$.cookie( 'aadsso-redirect', '/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/', { expires: 1, path: '/' });
+		});
+	});
+	</script>
+		<script>
+		jQuery(window).load(function () {
+			// Fix Bug #644092:MAS36: Page number
+			jQuery('div.nav-links>a.page-numbers').each(function(){
+				jQuery(this).attr('aria-label', 'Page ' + jQuery(this).html());
+			});
+
+			// Fix Bug #633981:MAS20B:  Talkback: Talkback announces link for Number of Comments as 'Number link'
+			jQuery('span.comments-link>a').each(function () {
+				var num = parseInt(jQuery(this).html());
+				if (isNaN(num)) {
+					return false;
+				}
+				var content = num + (num === 1 ? ' comment' : ' comments');
+				jQuery(this).attr({
+					'aria-label': content,
+					'title': content
+				});
+			});
+
+
+			jQuery('#search-option>div').each(function () {
+				jQuery(this).attr('aria-label',jQuery('span.search-text',this).html());
+			});
+
+			// Fix Bug #671896:MAS40B :Inspect: Header: "Name" property is not descriptive for  "Microsoft | TechNet" link (logo).
+			var currentHost = location.hostname;
+			if (currentHost.indexOf('msdn') !== -1) {
+				jQuery('#home-link').attr('aria-label','Microsoft Developer');
+			} else if (currentHost.indexOf('technet') !== -1) {
+				jQuery('#home-link').attr('aria-label','Microsoft Technet');
+			}
+
+			// Detect High Contrast Mode in non IE/Edge Browsers
+			jQuery('html').css('background-image', 'url("data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==")');
+			if (jQuery('html').css('background-image') === 'none') {
+				jQuery('html').attr('data-high-contrast', 'true');
+			}
+
+			// Fix Bug #670327:MAS40B: Inspect: Header: "Localized control type" property is incorrect for the header elements.
+			// Fix Bug #683788:MAS40B: TalkBack: Header: For menu items in technet link menu bar, expand/collapse pattern available, is not announced by TalkBack 
+			jQuery('#site-navigation>div>ul>li>a').attr('role', 'button').attr('aria-expanded', 'false').click(function () {
+				if (jQuery(this).attr('aria-expanded') === 'true') {
+					jQuery(this).attr('aria-expanded', 'false');
+				} else {
+					jQuery(this).attr('aria-expanded', 'true');
+				}
+			});
+
+		});
+	</script>
+		<!--ADD WEDCS SCRIPT-->
+	<div id="_WEDCSInsertedData" style="display: none;"><iframe id="_msnFrame" src="https://c1.microsoft.com/c.gif?DI=4050&amp;did=1&amp;t=" style="z-index: -1; height: 1px; width: 1px; display: none !important; visibility: hidden;" onload="javascript:MscomBeacon();"></iframe></div>
+	<script type="text/javascript">
+		jQuery( window ).load(
+			function() {
+				window.varSegmentation = 0;
+				window.varClickTracking = 1;
+				window.varCustomerTracking = 1;
+				window.varAutoFirePV = 1;
+				window.Route = ""; // was 23470 in the windows theme framework
+				window.Ctrl = "";
+
+								var blogPost = {};
+
+								blogPost.permalink = 'https://blogs.technet.microsoft.com/mmpc/2017/06/27/new-ransomware-old-techniques-petya-adds-worm-capabilities/';
+				blogPost.title = 'New ransomware, old techniques: Petya adds worm capabilities';
+				blogPost.author = 'msft-mmpc';
+				blogPost.post_date = '2017-06-27 23:57:43';
+				blogPost.category = 'Exploits,Ransomware,Windows 10,Windows 10 Creators Update,Windows Defender ATP,Windows Defender AV,Windows Defender Security Intelligence,Windows security technologies,Worms';
+				blogPost.tag = 'ETERNALBLUE,ETERNALROMANCE,exploits,MS17-010,Petya,ransomware,ransomware outbreak,software supply chain,WannacCrypt,Windows Defender ATP,worm,worm-like ransomware';
+				blogPost.comment_number = '70';
+								window.blogPost = blogPost;
+
+				var wedcs_script = document.createElement('script');
+				wedcs_script.type = 'text/javascript';
+				wedcs_script.async = true;
+				wedcs_script.src = 'https://blogs.technet.microsoft.com/mmpc/wp-content/mu-plugins/wedcs-script/ms2_blogs.js';
+				if (typeof mscc === 'undefined' || (!mscc || mscc.hasConsent())) {
+					document.getElementsByTagName('body')[0].appendChild(wedcs_script);
+				}
+			});
+	</script>
+	<!--
+	<script src="//c.microsoft.com/ms.js" type="text/javascript"></script>
+	<noscript><img alt="" width="1" height="1" src="http://c.microsoft.com/trans_pixel.aspx"/></noscript>
+	-->
+		<script type="text/javascript">
+			jQuery( window ).load(
+				function () {
+					var stylesheet = document.createElement('link');
+					stylesheet.href = 'https://blogs.technet.microsoft.com/mmpc/wp-content/plugins/simple-follow-me-social-buttons-widget/assets/css/style.css?ver=3.3.3';
+					stylesheet.rel = 'stylesheet';
+					stylesheet.type = 'text/css';
+					document.getElementsByTagName('head')[0].appendChild(stylesheet);
+				});
+		</script>
+				<script type="text/javascript">
+			jQuery( window ).load(
+				function () {
+					var stylesheet = document.createElement('link');
+					stylesheet.href = 'https://blogs.technet.microsoft.com/mmpc/wp-content/plugins/simple-follow-me-social-buttons-widget/assets/css/icons.css?ver=3.3.3';
+					stylesheet.rel = 'stylesheet';
+					stylesheet.type = 'text/css';
+					document.getElementsByTagName('head')[0].appendChild(stylesheet);
+				});
+		</script>
+				<script type="text/javascript">
+			jQuery( window ).load(
+				function () {
+					var script = document.createElement('script');
+					script.src = 'https://blogs.technet.microsoft.com/mmpc/wp-content/plugins/simple-follow-me-social-buttons-widget/assets/js/front-widget.js?ver=3.3.3';
+					script.type = 'text/javascript';
+					script.async = true;
+					document.getElementsByTagName('body')[0].appendChild(script);
+				});
+		</script>
+		
+		<span id="page-view-tracking-info" blog-id="337" post-id="13175"></span>
+		<script type="text/javascript">
+			// Check for compatibility before IE8
+			if (!Date.now) {
+ 				 Date.now = function() { return new Date().getTime(); };
+			}
+			jQuery( window ).load( function() {
+				jQuery.ajax({
+					url: 'https://blogs.technet.microsoft.com/mmpc/wp-admin/admin-ajax.php',
+					type: 'get',
+					data: {
+						action: 'track_page_view',
+						track_page_view_post_id: jQuery('#page-view-tracking-info').attr('post-id'),
+						track_page_view_blog_id: jQuery('#page-view-tracking-info').attr('blog-id'),
+						track_page_view_post_url: window.location.href.split('?')[0],
+						timestamp: Date.now()
+						}
+				});
+			});
+		</script>
+<script>
+dataLayer = [[]];
+</script>
+<!-- Google Tag Manager -->
+<noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-PLR87W" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<script>jQuery(window).load(function(){(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&amp;l='+l:'';j.async=true;j.src=
+'//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-PLR87W')});</script>
+<!-- End Google Tag Manager -->	<script type="text/javascript">
+		jQuery( window ).load(
+			function(i) {
+				var n = window,
+					t = document,
+					e = n.console,
+					f, u, r, o;
+				typeof e == "undefined" && (f = function() {}, e = {
+					log: f,
+					warn: f,
+					assert: f,
+					clear: f,
+					dir: f,
+					error: f,
+					info: f,
+					profile: f,
+					profileEnd: f
+				}), u = {
+					appendToHead: function(n) {
+						if (t.getElementsByTagName("head").length > 0) t.getElementsByTagName("head")[0].appendChild(n);
+						else throw "bootstrapper: no head element found.";
+					},
+					appendToBody: function(n) {
+						if (t.getElementsByTagName("body").length > 0) t.getElementsByTagName("body")[0].appendChild(n);
+						else throw "bootstrapper: no body element found.";
+					},
+					addStyleElement: function(n) {
+						var i = t.createElement("link");
+						i.setAttribute("href", n), i.setAttribute("rel", "stylesheet"), i.setAttribute("type", "text/css"), u.appendToHead(i)
+					},
+					loadFiles: function(n, t) {
+						if (t !== i && u.recursiveScriptLoad(0, t), n !== i)
+							for (var r = 0, r = 0; r < n.length; r++) u.addStyleElement(n[r])
+					},
+					recursiveScriptLoad: function(n, t) {
+						t[n] && u.addScriptElement(t[n], function() {
+							u.recursiveScriptLoad(n + 1, t)
+						})
+					},
+					isCompatible: function(n, t) {
+						var r, u, i;
+						return (r = n.split("."), u = t.split("."), i = function(n) {
+							return isNaN(n) ? 0 : n
+						}, i(r[0]) > i(u[0]) || i(r[0]) === i(u[0]) && i(r[1]) > i(u[1]) || i(r[0]) === i(u[0]) && i(r[1]) === i(u[1]) && i(r[2]) >= i(u[2])) ? !0 : !1
+					},
+					addScriptElement: function(i, r) {
+						var f, e;
+						f = t.createElement("script"), f.setAttribute("type", "text/javascript"), f.async = true, f.setAttribute("src", i), f.attachEvent ? (e = function() {
+							setTimeout(function() {
+								typeof n.jQuery != "undefined" && r ? r() : e()
+							}, 10)
+						}, e()) : f.onload = r, u.appendToBody(f)
+					},
+					load: function(n, t) {
+						setTimeout(function() {
+							if (typeof n == "undefined") try {
+								u.addScriptElement(t.defaultPath, function() {
+									u.loadFiles(t.cssFiles, t.jsFiles)
+								});
+								return
+							} catch (i) {
+								e.warn("bootstrapper: failed to load default jQuery")
+							} else if (!u.isCompatible(n.fn.jquery, t.minimumVersion)) {
+								e.warn("bootstrapper: jQuery version is too old to load UserCard. Use v1.4.2 or later.");
+								return
+							}
+							u.loadFiles(t.cssFiles, t.jsFiles)
+						}, 0)
+					}
+				}, r = {
+					host: n.location.host,
+					search: "",
+					protocol: "https"
+				}, r.host = "widgets.services.microsoft.com", r.search = "?brand=msdn&lang=en&ver=4.9.0.0", r.protocol = "https:", o = {
+					minimumVersion: "1.1.2",
+					defaultPath: "https://code.jquery.com/jquery-1.4.2.min.js",
+					cssFiles: [r.protocol + "//" + r.host + "/v1/UnifiedBaseballCard.css" + r.search, r.protocol + "//" + r.host + "/v1/usercard.css" + r.search],
+					jsFiles: ["https://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js", r.protocol + "//" + r.host + "/v1/jquery.timeago.js" + r.search, r.protocol + "//" + r.host + "/v1/jquery.textfill.js" + r.search, r.protocol + "//" + r.host + "/v1/widgets.js" + r.search]
+				}, typeof n.jQuery == "undefined" ? u.load(i, o) : u.load(n.jQuery, o)
+			}
+		);
+	</script>
+<script type="text/javascript" src="test_microsoft_hashes_files/form.js"></script>
+<link rel="stylesheet" id="msdn-comment-notification-comment-form-css" href="test_microsoft_hashes_files/msdn-comment-notification-comment-form.css" type="text/css" media="all">
+<script type="text/javascript">
+/* <![CDATA[ */
+var wds_ratings_config = {"ajaxurl":"https:\/\/blogs.technet.microsoft.com\/mmpc\/wp-admin\/admin-ajax.php","user_id":"0","nonce":"99057cf166","debug":"","no_auth_alert":"You must be logged in to rate this article.","repeatedly_vote_alert":"You can not vote repeatedly in a short time","allow_anonymous_rating":"","blog_id":"337","rating_limit_login_user":"1","rating_limit_anonymous":"1","hide_rating_post_ids":""};
+var wds_ratings_config = {"ajaxurl":"https:\/\/blogs.technet.microsoft.com\/mmpc\/wp-admin\/admin-ajax.php","user_id":"0","nonce":"99057cf166","debug":"","no_auth_alert":"You must be logged in to rate this article.","repeatedly_vote_alert":"You can not vote repeatedly in a short time","allow_anonymous_rating":"","blog_id":"337","rating_limit_login_user":"1","rating_limit_anonymous":"1","hide_rating_post_ids":""};
+/* ]]> */
+</script>
+<script type="text/javascript" src="test_microsoft_hashes_files/wds-ratings.js"></script>
+<script type="text/javascript" src="test_microsoft_hashes_files/jquery-migrate.js"></script>
+<script type="text/javascript" src="test_microsoft_hashes_files/theme-merged.js"></script>
+<script type="text/javascript" src="test_microsoft_hashes_files/wp-embed.js"></script>
+<script type="text/javascript" src="test_microsoft_hashes_files/msdn-comment-notification-comment-form.js"></script>
+<script type="text/javascript" src="test_microsoft_hashes_files/jquery_002.js"></script>
+
+
+
+<script type="text/javascript" async="" src="test_microsoft_hashes_files/ms2_blogs.js"></script><script src="test_microsoft_hashes_files/front-widget.js" type="text/javascript" async=""></script><script type="text/javascript" async="" src="test_microsoft_hashes_files/jquery_003.js"></script><script type="text/javascript" async="" src="test_microsoft_hashes_files/jquery.js"></script><script type="text/javascript" async="" src="test_microsoft_hashes_files/jquery_004.js"></script><style>iframe[src="https://c1.microsoft.com/c.gif?DI=4050&did=1&t="]
+{display:none !important;}</style><script type="text/javascript" async="" src="test_microsoft_hashes_files/widgets.js"></script></body></html>
