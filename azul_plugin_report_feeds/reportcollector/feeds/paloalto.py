@@ -41,8 +41,15 @@ class Unit42Feed(RSSFeed):
         bs = bs4.BeautifulSoup(html, "lxml")
         for v in bs.find_all("article"):
             anchor = v.find("a")
+            if anchor is None:
+                raise ValueError("Expected anchor to be Tag, got None")
             link = anchor["href"]
             title = anchor.get("data-page-track-value", anchor.get_text())
-            date = v.find("time")["datetime"]
-            date_parsed = datetime.strptime(date[:19], "%Y-%m-%dT%H:%M:%S").timetuple()
-            yield Entry(title, link, date, date_parsed)
+            date = v.find("time")
+            if date is None:
+                raise ValueError("Expected date to be Tag, got None")
+            date_string = date["datetime"]
+            if not isinstance(date_string, str):
+                raise TypeError("Expected date_string to be str, got None")
+            date_parsed = datetime.strptime(date_string[:19], "%Y-%m-%dT%H:%M:%S").timetuple()
+            yield Entry(title, link, date_string, date_parsed)  # ty: ignore[missing-argument] content is not specified

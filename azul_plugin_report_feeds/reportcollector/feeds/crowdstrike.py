@@ -7,7 +7,7 @@ import re
 import shutil
 import subprocess  # noqa: S404 # nosec B404
 import tempfile
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Iterator
 
 from azul_plugin_report_feeds.reportcollector.base_feed import (
@@ -71,17 +71,17 @@ class CrowdstrikeReports(BaseFeed):
 
                     m = re.search(r"([A-Z]{3,5}\-\d+)", name)
                     if not m:
-                        logger.warn('Unable to match report id from "%s" (%s)', name, path)
+                        logger.warning('Unable to match report id from "%s" (%s)', name, path)
                         continue
 
                     report_id = m.group(1)
                     name = name[len(report_id) :].strip()
-                    created = datetime.utcfromtimestamp(created)
+                    created = datetime.fromtimestamp(created, tz=UTC)
                     reportpdf = path[:-5] + ".pdf"
                     if not os.path.exists(reportpdf):
                         reportpdf = None
                     reports.append(
-                        ReportResult(
+                        ReportResult(  # ty: ignore[pydantic-discarded-extra-argument]
                             publisher=self.publisher,
                             distribution=self.distribution,
                             topic=self.source,
@@ -98,14 +98,14 @@ class CrowdstrikeReports(BaseFeed):
                     )
         useful = 0
         for cur_report in sorted(reports, key=lambda r: r.timestamp):
-            if last_fetch and cur_report.timestamp <= last_fetch:
+            if last_fetch and cur_report.timestamp and cur_report.timestamp <= last_fetch:
                 continue
             if useful >= self.max_reports:
                 logger.info("Exiting early as reached limit of %i reports", self.max_reports)
                 return
 
             if not cur_report._report_path:
-                logger.warn(
+                logger.warning(
                     "No matching pdf report found for %s..may have hashes in description", cur_report._report_path
                 )
             else:

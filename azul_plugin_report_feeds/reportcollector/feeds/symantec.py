@@ -43,4 +43,4 @@ class SymantecBlog(RSSFeed):
             title = r["title"].strip()
             date = r["created"]  # unix ts
             date_parsed = datetime.fromtimestamp(float(date), tz=timezone.utc).timetuple()
-            yield Entry(title, link, date, date_parsed)
+            yield Entry(title, link, date, date_parsed)  # ty: ignore[missing-argument] content isn't specified

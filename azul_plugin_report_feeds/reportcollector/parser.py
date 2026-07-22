@@ -132,6 +132,8 @@ class LinkSimilarity:
         self.url = url
         self.host = u.hostname
         self.path = u.path
+        if self.host is None or self.path is None:
+            raise ValueError("Expected u.hostname and u.path to be str, got None")
         self.current_domain = LinkSimilarity.domain(self.host)
         self.current_words = LinkSimilarity.words(self.path)
 
@@ -214,7 +216,7 @@ class HTMLParser:
             # if using get_text it will strip all formatting including <br/>
             # which can run hashes into each other on same sites/pages, so
             # ensure we give a whitespace separator to join with...
-            return self.bs.body.get_text("\n")
+            return self.bs.body.get_text("\n")  # ty: ignore[unresolved-attribute]
         except AttributeError:
             return ""
 
@@ -226,6 +228,7 @@ class HTMLParser:
             str(x["href"])
             for x in self.bs.find_all("a")
             if x.get("href")
+            and isinstance(x["href"], str)
             and x["href"].lower().endswith(".pdf")
             and self.link.compare(x["href"], badwords=badwords or [])
         ]

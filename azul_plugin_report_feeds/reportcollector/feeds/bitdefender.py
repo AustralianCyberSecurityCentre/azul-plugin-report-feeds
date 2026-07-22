@@ -43,8 +43,13 @@ class BitDefenderFeed(RSSFeed):
             anchor = v.find("a", {"class": "article-thumb__link"})
             if not anchor:
                 continue
+            if not isinstance(anchor["href"], (bytes, str)):
+                raise TypeError(f'Expected anchor["href"] to be str | bytes, got {type(anchor["href"])}')
             link = urljoin(self.feed_url, anchor["href"])
             title = anchor.get_text().strip()
-            date = v.find("p", {"class": "article-details__info"}).get_text().strip()
+            article_details_info = v.find("p", {"class": "article-details__info"})
+            if article_details_info is None:
+                raise TypeError("Expected article_details_info to be a Tag, got None")
+            date = article_details_info.get_text().strip()
             date_parsed = datetime.strptime(date, "%B %d, %Y").timetuple()
-            yield Entry(title, link, date, date_parsed)
+            yield Entry(title, link, date, date_parsed)  # ty: ignore[missing-argument] skip content section

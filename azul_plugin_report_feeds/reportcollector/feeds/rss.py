@@ -118,10 +118,10 @@ class RSSFeed(BaseFeed):
                             return resp
                     except Exception as ex:
                         # FUTURE distinguish between temp and perm fails
-                        logger.warn("Broken Link? %s", str(ex))
+                        logger.warning("Broken Link? %s", str(ex))
 
         if indicators and pdf:
-            return pdf, indicators
+            return pdf, indicators  # ty: ignore[invalid-return-type] ty is confused by the `content`'s type, and frankly I am too.
 
     def listing(self):
         """Retrieve the full available RSS listing.
