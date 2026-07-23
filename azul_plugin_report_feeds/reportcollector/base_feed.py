@@ -66,7 +66,7 @@ class ReportFeedOptions(BaseSettings):
     feedly_url_encoded_stream_id: str = ""
     feedly_bearer_token: str = ""
 
-    _feeds: list[type["BaseFeed"]] | None = None
+    _feeds: list | None = None
 
     def perform_setup(self):
         """Perform the environment setup for the report feed options to be used."""
@@ -80,7 +80,7 @@ class ReportFeedOptions(BaseSettings):
             self._feeds.append(cls(feed_options=cur_feed, global_options=self))
 
     @property
-    def feeds(self) -> list[type["BaseFeed"]]:
+    def feeds(self) -> list:
         """Get the feeds objects."""
         if not self._feeds:
             self._feeds = []

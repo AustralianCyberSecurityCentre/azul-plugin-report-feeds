@@ -56,7 +56,7 @@ class ExportedFeed(BaseFeed):
                 with open(path, "rb") as tmp:
                     j = json.loads(tmp.read())
                     report = ReportResult.model_validate(j)
-                if last_fetch and report.timestamp <= last_fetch:
+                if last_fetch and report.timestamp and report.timestamp <= last_fetch:
                     continue
 
                 report._report_path = os.path.dirname(path)
@@ -71,7 +71,9 @@ class ExportedFeed(BaseFeed):
 
         for cur_report in sorted(reports, key=lambda r: r.timestamp):
             path = cur_report._report_path
-            pdf_path = os.path.join(cur_report._report_path, cur_report.slug + ".pdf")
+            if path is None or cur_report.slug is None:
+                raise TypeError("Expected path and cur_report.slug to be str, got None")
+            pdf_path = os.path.join(path, cur_report.slug + ".pdf")
             if os.path.exists(pdf_path):
                 with open(pdf_path, "rb") as tmp:
                     cur_report.report = tmp.read()

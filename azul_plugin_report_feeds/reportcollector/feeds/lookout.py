@@ -31,7 +31,7 @@ class LookoutBlog(RSSFeed):
 
     def convert(self, entry: dict) -> Entry:
         """Map from the json blog structure to our standard entry tuple."""
-        return Entry(
+        return Entry(  # ty: ignore[missing-argument]
             entry["AdditionalFields"]["Title"],
             urljoin(self.feed_url, entry["AdditionalFields"]["path"]),
             entry["AdditionalFields"]["Date"],

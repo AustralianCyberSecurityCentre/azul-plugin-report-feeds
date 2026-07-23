@@ -99,14 +99,14 @@ class AzulPluginReportFeeds(Plugin):
                 self, self.get_multiplugin(feed.publisher)
             )
 
-    def _get_publisher_author(self, publisher_name: str) -> azm.Author:
+    def _get_publisher_author(self, publisher_name: str | None) -> azm.Author:
         """Get the provided publisher and return the default publisher if the specific one couldn't be found."""
         return self.publisher_authors.get(publisher_name, self.author)
 
     def _get_report_info(self, content: bytes) -> azm.Datastream:
         """Convert the raw contents of a pdf report into a Datastream object ready to add as an augmented stream."""
         label = DataLabel.REPORT
-        file_info = self.dp.submit_binary(self.cfg.feed_source_name, label, content)
+        file_info = self.dp.submit_binary(self.cfg.feed_source_name, label, content)  # ty: ignore[unresolved-attribute] ty doesn't understand add_settings
         file_info.label = label  # Dispatcher doesn't set label
         return file_info
 
@@ -121,6 +121,8 @@ class AzulPluginReportFeeds(Plugin):
     ) -> tuple[list[azm.BinaryEvent], list[azm.BinaryEvent], list[azm.DownloadEvent]]:
         """Process a report and extract the appropriate features, extract binaries and make download requests."""
         # If the timezone isn't set set it. (shouldn't happen but just in case.)
+        if not report.timestamp:
+            raise ValueError("Expected report.timestamp to be a datetime, got None")
         if not report.timestamp.tzname:
             report.timestamp = report.timestamp.replace(tzinfo=pendulum.UTC)
             logger.warning(f"Timezone isn't set for report published by '{report.publisher=}'")
@@ -135,7 +137,7 @@ class AzulPluginReportFeeds(Plugin):
             report_pdf = None
 
         report_pdf_info = None
-        if report_pdf:
+        if report_pdf and report.report:
             report_pdf_info = self._get_report_info(report.report)
 
         logger.info(f"Posting {report.publisher=} report {report.slug} ({report.timestamp}) to Azul")
@@ -154,12 +156,12 @@ class AzulPluginReportFeeds(Plugin):
                 report.indicators.remove(cur_indicator)
 
         report_refs = report.model_dump(
-            include=["publisher", "distribution", "slug", "site", "url", "report_id"], exclude_none=True
+            include=set(["publisher", "distribution", "slug", "site", "url", "report_id"]), exclude_none=True
         )
 
-        if len(self.cfg.ref_key_to_report_result_key) > 0:
+        if len(self.cfg.ref_key_to_report_result_key) > 0:  # ty: ignore[unresolved-attribute] ty doesn't understand add_settings
             dumped_model = report.model_dump()
-            for ref_key, report_key in self.cfg.ref_key_to_report_result_key.items():
+            for ref_key, report_key in self.cfg.ref_key_to_report_result_key.items():  # ty: ignore[unresolved-attribute] ty doesn't understand add_settings
                 try:
                     val = dumped_model[report_key]
                     report_refs[ref_key] = val
@@ -177,7 +179,9 @@ class AzulPluginReportFeeds(Plugin):
         download_events: list[azm.DownloadEvent] = []
 
         # Find features that will be common to all indicators for this report.
-        common_features: dict[str, str] = {"report_found": report.site if report.site else report.url}
+        common_features: dict[str, str] = {
+            "report_found": report.site if report.site else report.url if report.url else ""
+        }
         if report.description:
             common_features["report_description"] = report.description
         if report.report_type:
@@ -192,13 +196,13 @@ class AzulPluginReportFeeds(Plugin):
             event = self._gen_indicator_event(report.publisher, indicator, common_features, report_data, report_refs)
             mapped_events.append(event)
 
-            if len(download_events) < self.cfg.max_downloads_per_report:
+            if len(download_events) < self.cfg.max_downloads_per_report:  # ty: ignore[unresolved-attribute] ty doesn't understand add_settings
                 download_events.append(self._gen_download_event(report, indicator, report_refs))
 
         sourced_events: list[azm.BinaryEvent] = []
         # Child malware samples if there are any.
         for file_content in report.files:
-            file_info = self.dp.submit_binary(self.cfg.feed_source_name, DataLabel.CONTENT, file_content)
+            file_info = self.dp.submit_binary(self.cfg.feed_source_name, DataLabel.CONTENT, file_content)  # ty: ignore[unresolved-attribute] ty doesn't understand add_settings
             file_info.label = DataLabel.CONTENT  # Dispatcher doesn't set label
             as_entity = file_info.to_input_entity()
             as_entity.datastreams = report_data
@@ -280,6 +284,8 @@ class AzulPluginReportFeeds(Plugin):
         """Create an Input event from the inputs setting the timestamps to now."""
         timestamp = pendulum.now(pendulum.UTC).to_iso8601_string()
         current_publisher = self._get_publisher_author(publisher)
+        if entity.sha256 is None:
+            raise ValueError("Expected entity.sha256 to str, got None")
         return azm.BinaryEvent(
             kafka_key="reportfeed-placeholder",  # temporary id so we can create the object
             dequeued=f"report-feeds.{entity.sha256}.{current_publisher.name}.{current_publisher.version}.{timestamp}",
@@ -289,7 +295,7 @@ class AzulPluginReportFeeds(Plugin):
             author=current_publisher,
             entity=entity,
             source=azm.Source(
-                name=self.cfg.feed_source_name,
+                name=self.cfg.feed_source_name,  # ty: ignore[unresolved-attribute] ty doesn't understand add_settings
                 timestamp=timestamp,
                 references=references,
                 path=[
@@ -301,7 +307,7 @@ class AzulPluginReportFeeds(Plugin):
                         filename=filename,
                     )
                 ],
-                security=self.cfg.feed_security,
+                security=self.cfg.feed_security,  # ty: ignore[unresolved-attribute] ty doesn't understand add_settings
             ),
         )
 
@@ -318,7 +324,7 @@ class AzulPluginReportFeeds(Plugin):
             hash=indicator.sha256,
             pcap=True,
             category=report.slug,
-            category_quota=self.cfg.max_downloads_per_report,
+            category_quota=self.cfg.max_downloads_per_report,  # ty: ignore[unresolved-attribute] ty doesn't understand add_settings
         )
 
         return azm.DownloadEvent(
@@ -330,11 +336,11 @@ class AzulPluginReportFeeds(Plugin):
             author=self.author,
             entity=entity,
             source=azm.Source(
-                name=self.cfg.feed_source_name,
+                name=self.cfg.feed_source_name,  # ty: ignore[unresolved-attribute] ty doesn't understand add_settings
                 timestamp=timestamp,
                 references=references,
                 path=[],
-                security=self.cfg.feed_security,
+                security=self.cfg.feed_security,  # ty: ignore[unresolved-attribute] ty doesn't understand add_settings
             ),
         )
 
@@ -436,13 +442,13 @@ class AzulPluginReportFeeds(Plugin):
 
     def _load_metric_handlers(self):
         """Create all of the metric handlers ready to capture metrics."""
-        push_gateway = self.cfg.prometheus_push_gateway
+        push_gateway = self.cfg.prometheus_push_gateway  # ty: ignore[unresolved-attribute] ty doesn't understand add_settings
         if not push_gateway:
             self.logger.info("Prometheus metrics are not being collected.")
         else:
             self.metrics_enabled = True
             self.gateway = push_gateway
-            self.job_name = self.NAME + self.cfg.namespace_suffix
+            self.job_name = self.NAME + self.cfg.namespace_suffix  # ty: ignore[unresolved-attribute] ty doesn't understand add_settings
 
         self.registry = CollectorRegistry()
         # Setup all metrics and point them to the appropriate registry.
@@ -492,7 +498,7 @@ class AzulPluginReportFeeds(Plugin):
 
     def run_once(self):
         """Run all of the configured feeds once."""
-        state_dir = self.cfg.state_directory
+        state_dir = self.cfg.state_directory  # ty: ignore[unresolved-attribute] ty doesn't understand add_settings
         try:
             if not os.path.exists(state_dir):
                 os.makedirs(state_dir)
@@ -523,7 +529,7 @@ def main():
         config["data_url"] = args.server
     if args.config:
         # Update with `-c NAME VALUE` args
-        base_feed.update({n: v for n, v in args.config})
+        config.update({n: v for n, v in args.config})
 
     # Load config and create plugin.
     config = azr_settings.parse_config(AzulPluginReportFeeds, config)

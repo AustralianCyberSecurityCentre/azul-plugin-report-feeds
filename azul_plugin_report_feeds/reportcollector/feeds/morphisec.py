@@ -37,15 +37,23 @@ class MorphisecFeed(RSSFeed):
         """Yield the contained Entries from the given html page/response."""
         bs = bs4.BeautifulSoup(html, "lxml")
         for v in bs.find_all("div", {"class": "post-header"}):
-            date = v.find("div", {"id": "hubspot-author_data"}).get_text()
+            date_div = v.find("div", {"id": "hubspot-author_data"})
+            if date_div is None:
+                raise ValueError("Expected date_div to be Tag, got None")
+            date = date_div.get_text()
             date = date[date.index(" on ") :].strip()
             header = v.find("h2")
-            link = header.find("a")["href"]
-            title = header.find("a").get_text()
+            if header is None:
+                raise ValueError("Expected header to be Tag, got None")
+            link_and_title = header.find("a")
+            if link_and_title is None:
+                raise ValueError("Expected link_and_title to be Tag, got None")
+            link = link_and_title["href"]
+            title = link_and_title.get_text()
             try:
                 date_parsed = datetime.strptime(date, "on %b %d, %Y %I:%M:%S %p").timetuple()
             except ValueError:
                 # more recent articles with the following date stamp
                 date_parsed = datetime.strptime(date, "on %B %d, %Y").timetuple()
 
-            yield Entry(title, link, date, date_parsed)
+            yield Entry(title, link, date, date_parsed)  # ty: ignore[missing-argument] content is not specified

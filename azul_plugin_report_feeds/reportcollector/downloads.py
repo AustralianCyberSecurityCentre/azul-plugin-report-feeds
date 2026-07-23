@@ -37,7 +37,7 @@ class FileDownloader:
     def _response_to_file(self, response: httpx.Response, outname: str):
         """Download repsonse content in chunks to outname."""
         with open(outname, "wb") as f:
-            for chunk in response.iter_content(chunk_size=8192):
+            for chunk in response.iter_bytes(chunk_size=8192):
                 if chunk:
                     f.write(chunk)
 
@@ -52,7 +52,7 @@ class FileDownloader:
             logger.info("File exists but hash mismatch.. re-downloading")
 
         url = self.url_template % filehash
-        r = httpx.get(url, stream=True, timeout=30)
+        r = httpx.get(url, timeout=30)
         r.raise_for_status()
         self._response_to_file(r, outname)
 
@@ -62,7 +62,7 @@ class FileDownloader:
             return
         try:
             url = self.pcap_template % filehash
-            r = httpx.get(url, stream=True, timeout=120)
+            r = httpx.get(url, timeout=120)
             r.raise_for_status()
             # will return 200 with json for ok but not found
             if r.headers.get("content-type") != "application/cap":
