@@ -81,7 +81,7 @@ class CrowdstrikeReports(BaseFeed):
                     if not os.path.exists(reportpdf):
                         reportpdf = None
                     reports.append(
-                        ReportResult(  # ty: ignore[pydantic-discarded-extra-argument]
+                        ReportResult(
                             publisher=self.publisher,
                             distribution=self.distribution,
                             topic=self.source,
