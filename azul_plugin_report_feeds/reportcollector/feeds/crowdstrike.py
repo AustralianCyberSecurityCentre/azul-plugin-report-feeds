@@ -93,9 +93,10 @@ class CrowdstrikeReports(BaseFeed):
                             report_id=report_id,
                             report_type=rtype,
                             description=desc,
-                            _report_path=reportpdf,
                         )
                     )
+                    reports[-1]._report_path = reportpdf
+
         useful = 0
         for cur_report in sorted(reports, key=lambda r: r.timestamp):
             if last_fetch and cur_report.timestamp and cur_report.timestamp <= last_fetch:
