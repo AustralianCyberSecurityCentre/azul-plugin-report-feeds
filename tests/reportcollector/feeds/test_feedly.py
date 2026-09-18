@@ -202,9 +202,7 @@ def test_fetch_skips_reports_already_read(
     """Reports published at or before last_fetch are dropped."""
     # First page has a continuation token, the empty follow-up page has none, that ends the fetch loop
     httpserver.expect_ordered_request("/v3/streams/contents").respond_with_data(response_data=feedly_response)
-    httpserver.expect_ordered_request("/v3/streams/contents").respond_with_data(
-        response_data=feedly_empty_response
-    )
+    httpserver.expect_ordered_request("/v3/streams/contents").respond_with_data(response_data=feedly_empty_response)
     feed_settings = base_feed.ReportFeedOptions.Feed(
         publisher="Test",
         distribution="public",
