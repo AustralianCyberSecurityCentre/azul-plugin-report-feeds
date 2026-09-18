@@ -156,8 +156,7 @@ class JsonFeedly(BaseFeed):
                 best_content = ""
                 extracted_title = ""
                 published_time = pendulum.from_timestamp(item.published / 1000)
-                # `newerThan` filters on when feedly crawled an entry rather than when it was published,
-                # so reports read on an earlier run come back and would be submitted a second time.
+                # newerThan filters on when feedly crawled an entry rather than when it was published
                 if already_read and published_time <= already_read:
                     continue
                 source_url = ""
