@@ -127,7 +127,7 @@ class JsonFeedly(BaseFeed):
             last_fetch = datetime.now(tz=pendulum.UTC)
             last_fetch = last_fetch - timedelta(days=self.max_days_to_go_back)
 
-        closest_fetch = datetime.now(tz=pendulum.UTC) - timedelta(days=-self.older_than_days)
+        closest_fetch = datetime.now(tz=pendulum.UTC) - timedelta(days=self.older_than_days)
 
         time_since_in_ms = int(last_fetch.timestamp() * 1000)
         closest_fetch_in_ms = int(closest_fetch.timestamp() * 1000)
