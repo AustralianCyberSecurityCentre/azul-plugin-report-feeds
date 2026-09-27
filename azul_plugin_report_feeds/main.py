@@ -367,14 +367,19 @@ class AzulPluginReportFeeds(Plugin):
 
             fetched = False
             report_info = None
+            newest_timestamp = last_timestamp
             try:
                 for report_info in feed.fetch(last_fetch=last_timestamp):
                     # Save the latest successfully loaded report as the start point for the next load.
                     fetched = True
                     if report_info.timestamp:
-                        with open(state_file, "w") as tmp:
-                            newest_timestamp = pendulum.instance(report_info.timestamp, tz=pendulum.UTC)
-                            tmp.write(newest_timestamp.to_iso8601_string())
+                        current_timestamp = pendulum.instance(report_info.timestamp, tz=pendulum.UTC)
+                        # A feed yielding newest first would otherwise leave the marker on its oldest
+                        # report and the whole window would be read again on the next run.
+                        if not newest_timestamp or current_timestamp > newest_timestamp:
+                            newest_timestamp = current_timestamp
+                            with open(state_file, "w") as tmp:
+                                tmp.write(newest_timestamp.to_iso8601_string())
                     metrics = self.process_report(report_info)
                     self._capture_feed_metrics(feed, metrics)
                     # Set fetched back to false after processing is done.

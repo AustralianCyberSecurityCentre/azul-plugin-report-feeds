@@ -196,6 +196,34 @@ def test_fetch_continuation(httpserver: HTTPServer, feedly_response: bytes):
     assert 10 == found_reports
 
 
+def test_fetch_skips_reports_already_read(
+    httpserver: HTTPServer, feedly_response: bytes, feedly_empty_response: bytes
+):
+    """Reports published at or before last_fetch are dropped."""
+    # First page has a continuation token, the empty follow-up page has none, that ends the fetch loop
+    httpserver.expect_ordered_request("/v3/streams/contents").respond_with_data(response_data=feedly_response)
+    httpserver.expect_ordered_request("/v3/streams/contents").respond_with_data(response_data=feedly_empty_response)
+    feed_settings = base_feed.ReportFeedOptions.Feed(
+        publisher="Test",
+        distribution="public",
+        source="reporting",
+        site="test",
+        feed_url=httpserver.url_for("/v3/streams/contents"),
+        module="",
+        max_days=90,
+    )
+    p = feedly.JsonFeedly(feed_settings, COMMON_GLOBAL_OPTIONS)
+
+    last_fetch = pendulum.DateTime(2026, 1, 18, 13, 0, 0, tzinfo=pendulum.UTC)
+    titles = [r.title for r in p.fetch(last_fetch=last_fetch)]
+
+    # The 08:15:26 report was published before last_fetch, only the two published after it come back.
+    assert titles == [
+        "New Remcos Campaign Distributed Through Fake Shipping Document",
+        "TamperedChef serves bad ads, with infostealers as the main course",
+    ]
+
+
 def _base_status_code_error(httpserver: HTTPServer, status_code: int):
     """Base case for testing status code failures"""
     max_days_feed_old = 90
