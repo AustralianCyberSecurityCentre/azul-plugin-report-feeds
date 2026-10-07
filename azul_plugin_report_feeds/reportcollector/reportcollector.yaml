@@ -124,6 +124,13 @@ feeds:
     site: "https://www.welivesecurity.com/"
     feed_url: "https://www.welivesecurity.com/en/rss/feed/"
 
+  - publisher: Feedly
+    source: reporting
+    module: reportcollector.feeds.feedly.JsonFeedly
+    distribution: public
+    site: https://api.feedly.com
+    feed_url: https://api.feedly.com/v3/streams/contents
+
   - publisher: Fortinet
     source: reporting
     module: reportcollector.feeds.rss.RSSFeed
@@ -201,6 +208,20 @@ feeds:
     distribution: public
     site: "https://www.malwarebytes.com/"
     feed_url: "https://www.malwarebytes.com/blog/feed/index.xml"
+
+  - publisher: MalwareNews-analysis
+    source: reporting
+    module: reportcollector.feeds.rss.RSSFeed
+    distribution: public
+    site: "https://www.malware.news/"
+    feed_url: "https://malware.news/c/malwareanalysis.rss"
+  
+  - publisher: MalwareNews-news
+    source: reporting
+    module: reportcollector.feeds.rss.RSSFeed
+    distribution: public
+    site: "https://www.malware.news/"
+    feed_url: "https://malware.news/c/news.rss"
 
   - publisher: McAfee
     source: reporting
