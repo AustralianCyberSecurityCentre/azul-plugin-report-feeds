@@ -5,8 +5,24 @@ feeds:
     distribution: public
     site: "https://www.microsoft.com/security/"
     feed_url: "https://www.microsoft.com/en-us/security/blog/topic/threat-intelligence/feed/"
+  
   - publisher: Feedly
     source: reporting
     module: reportcollector.feeds.feedly.JsonFeedly
+    distribution: public
     site: https://api.feedly.com
     feed_url: https://api.feedly.com/v3/streams/contents
+
+  - publisher: MalwareNews-analysis
+    source: reporting
+    module: reportcollector.feeds.rss.RSSFeed
+    distribution: public
+    site: "https://www.malware.news/"
+    feed_url: "https://malware.news/c/malwareanalysis.rss"
+  
+  - publisher: MalwareNews-news
+    source: reporting
+    module: reportcollector.feeds.rss.RSSFeed
+    distribution: public
+    site: "https://www.malware.news/"
+    feed_url: "https://malware.news/c/news.rss"
