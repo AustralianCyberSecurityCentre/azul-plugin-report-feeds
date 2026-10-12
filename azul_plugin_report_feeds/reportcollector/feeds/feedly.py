@@ -120,16 +120,14 @@ class JsonFeedly(BaseFeed):
         self.feedly_url = f"{feed_options.feed_url}?streamID="
 
     def fetch(self, last_fetch: datetime | None) -> Iterator[ReportResult]:
-        """Yield the latest parsed reports from the Feedly json feed.
-
-        Should provide results oldest first newest last to try and make source time and ordering in Azul
-        correspond to source time and order in Azul.
-        """
+        """Yield the latest parsed reports from the Feedly json feed."""
+        # Reports published at or before this were read on an earlier run.
+        already_read = last_fetch
         if not last_fetch:
             last_fetch = datetime.now(tz=pendulum.UTC)
             last_fetch = last_fetch - timedelta(days=self.max_days_to_go_back)
 
-        closest_fetch = datetime.now(tz=pendulum.UTC) - timedelta(days=-self.older_than_days)
+        closest_fetch = datetime.now(tz=pendulum.UTC) - timedelta(days=self.older_than_days)
 
         time_since_in_ms = int(last_fetch.timestamp() * 1000)
         closest_fetch_in_ms = int(closest_fetch.timestamp() * 1000)
@@ -158,6 +156,9 @@ class JsonFeedly(BaseFeed):
                 best_content = ""
                 extracted_title = ""
                 published_time = pendulum.from_timestamp(item.published / 1000)
+                # newerThan filters on when feedly crawled an entry rather than when it was published
+                if already_read and published_time <= already_read:
+                    continue
                 source_url = ""
                 iocs: list[Indicator] = []
                 general_indicator_values: set[str] = set()
