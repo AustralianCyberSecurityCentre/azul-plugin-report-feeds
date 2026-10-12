@@ -25,6 +25,7 @@ from prometheus_client import CollectorRegistry, Counter, Gauge, push_to_gateway
 
 from azul_plugin_report_feeds.reportcollector import base_feed
 from azul_plugin_report_feeds.reportcollector.models import Indicator, ReportResult
+from azul_plugin_report_feeds.reportcollector.util import ReportState
 
 logger = logging.getLogger(__name__)
 
@@ -344,9 +345,10 @@ class AzulPluginReportFeeds(Plugin):
             ),
         )
 
-    def _download_from_sources(self, feed_config: base_feed.ReportFeedOptions, state_dir: str):
+    def _download_from_sources(self, feed_config: base_feed.ReportFeedOptions):
         """Download from the feeds listed in the report-feeds configuration file."""
-        for feed in feed_config.feeds:
+        feeds: list[base_feed.BaseFeed] = feed_config.feeds
+        for feed in feeds:
             # Zero out all metrics for given feed labels so push gateway detects a new run.
             self._capture_feed_metrics(feed, ([], [], []), zeroing=True)
             self.publisher_failures_count.labels(publisher=feed.publisher, reason="process", message="").inc(0)
@@ -354,14 +356,7 @@ class AzulPluginReportFeeds(Plugin):
             self.publisher_fully_succeeded_count.labels(publisher=feed.publisher).inc(0)
 
             logger.info(f"Checking feed '{feed.publisher}'")
-            state_file = os.path.join(state_dir, feed.publisher)
-            last_timestamp = None
-
-            if os.path.exists(state_file):
-                with open(state_file, "r") as tmp:
-                    s = tmp.read().strip()
-                    last_timestamp = pendulum.parse(s, tz=pendulum.UTC)
-                    logger.info(f"Resuming {feed.publisher=} from {last_timestamp}")
+            last_timestamp = self.state.checkForFeedLastTimestamp(feed.publisher)
 
             start = time.time()
 
@@ -372,9 +367,7 @@ class AzulPluginReportFeeds(Plugin):
                     # Save the latest successfully loaded report as the start point for the next load.
                     fetched = True
                     if report_info.timestamp:
-                        with open(state_file, "w") as tmp:
-                            newest_timestamp = pendulum.instance(report_info.timestamp, tz=pendulum.UTC)
-                            tmp.write(newest_timestamp.to_iso8601_string())
+                        self.state.setFeedLastTimestamp(feed.publisher, report_info.timestamp)
                     metrics = self.process_report(report_info)
                     self._capture_feed_metrics(feed, metrics)
                     # Set fetched back to false after processing is done.
@@ -499,16 +492,11 @@ class AzulPluginReportFeeds(Plugin):
     def run_once(self):
         """Run all of the configured feeds once."""
         state_dir = self.cfg.state_directory  # ty: ignore[unresolved-attribute] ty doesn't understand add_settings
-        try:
-            if not os.path.exists(state_dir):
-                os.makedirs(state_dir)
-        except OSError as e:
-            if not os.path.exists(state_dir):
-                raise Exception(f"Unable to create {state_dir=}") from e
+        self.state = ReportState(state_dir)
 
         start_time = time.time()
         try:
-            self._download_from_sources(self.feed_config, state_dir)
+            self._download_from_sources(self.feed_config)
         finally:
             duration = time.time() - start_time
             self.total_run_duration_gauge.set(duration)

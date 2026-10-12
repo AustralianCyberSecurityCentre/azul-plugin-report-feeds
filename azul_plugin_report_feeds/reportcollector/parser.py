@@ -12,7 +12,7 @@ from urllib.parse import urlparse
 import bs4
 from playwright.sync_api import sync_playwright
 
-from azul_plugin_report_feeds.reportcollector.base_feed import ReportFeedOptions
+from azul_plugin_report_feeds.reportcollector.base_feed import PlaywrightLoadingDoneState, ReportFeedOptions
 from azul_plugin_report_feeds.reportcollector.models import Indicator
 
 logger = logging.getLogger("reportcollector")
@@ -41,9 +41,13 @@ class BaseHTML2PDFFeed(ABC):
 class HTML2PDFPlaywright(BaseHTML2PDFFeed):
     """Playwright based HTML to PDF converter."""
 
-    def __init__(self, options: ReportFeedOptions):
+    def __init__(self, options: ReportFeedOptions, loadMethod: PlaywrightLoadingDoneState | None = None):
         """Create a new Playwright pdf converter."""
         super().__init__(options)
+        if loadMethod:
+            self.loadMethod = loadMethod
+        else:
+            self.loadMethod = self.options.playwright_loading
 
     def convert(self, url: str) -> bytes:
         """Convert the provided URL to a PDF."""
@@ -68,7 +72,7 @@ class HTML2PDFPlaywright(BaseHTML2PDFFeed):
             if raw_html:
                 page.set_content(raw_html)
             else:
-                page.goto(url, wait_until=self.options.playwright_loading.value)
+                page.goto(url, wait_until=self.loadMethod.value)
             return_val = page.pdf(
                 format="A4",
                 print_background=True,

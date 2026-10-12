@@ -5,7 +5,7 @@ This plugin downloads reports/blogs for use in Azul.
 ## Overview
 
 This plugin is highly configurable with the sources it downloads configurable via a yaml file.
-An example of that file can be seen in `azul_plugin_report_feeds/reportcollector/reportfeeds.yaml`.
+An example of that file can be seen in `azul_plugin_report_feeds/reportfeeds.yaml`.
 
 When in use the plugin is run as a cronjob that runs every 4 hours as defined by the cronjob in azul-app.
 
@@ -48,8 +48,25 @@ azul-plugin-report-feeds --server 'http://azul-dispatcher.local'
 
 ## Usage: reportcollector
 
-Report collector can be run separately and will attempt to scrape report into and then download sha256's from
-virustotal.
+Report collector can be run separately and will attempt to scrape report into and can then attempt to download sha256's from virustotal.
+
+```sh
+Usage: reportcollector [OPTIONS]
+
+  Run the cmdline for the reportcollector, scraping all configured endpoints.
+
+  Hash indicators found can be attempted to be downloaded via VirusTotal, but
+  doing so requires a private API Key.
+
+Options:
+  --apikey TEXT    Api key to download files from virustotal with. If not set,
+                   will not attempt download
+  --feedlist TEXT  Yaml file containing a  list of feeds to scrape
+  --statedir TEXT  Path to the directory where state is stored.
+  --outdir TEXT    Directory where downloaded files and content are stored.
+  --debug BOOLEAN
+  --help           Show this message and exit.
+```
 
 ```bash
 reportcollector --api="VTAPIKEY"

@@ -13,6 +13,7 @@ from slugify import slugify
 
 from azul_plugin_report_feeds.reportcollector.base_feed import (
     BaseFeed,
+    PlaywrightLoadingDoneState,
     ReportFeedOptions,
 )
 from azul_plugin_report_feeds.reportcollector.models import Indicator, ReportResult
@@ -223,3 +224,15 @@ class RSSContentFeed(RSSFeed):
                 e.content = b"\n".join([c.get("value", "").encode("utf-8") for c in e.content])
         logger.info("%i entries found", len(feed.entries))
         return feed.entries
+
+
+class RSSIndefiniteFeed(RSSFeed):
+    """RSS Feeds/pages that will never finish network activity."""
+
+    def __init__(self, feed_options: ReportFeedOptions.Feed, global_options: ReportFeedOptions):
+        """Create a new RSS feed scraper."""
+        super().__init__(feed_options, global_options)
+
+        del self.converter
+        # Switch playwright to wait type that will trigger before timeout hits
+        self.converter = HTML2PDFPlaywright(global_options, PlaywrightLoadingDoneState.load)
