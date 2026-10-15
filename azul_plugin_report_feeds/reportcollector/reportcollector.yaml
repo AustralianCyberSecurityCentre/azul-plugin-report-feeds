@@ -211,14 +211,14 @@ feeds:
 
   - publisher: MalwareNews-analysis
     source: reporting
-    module: reportcollector.feeds.rss.RSSFeed
+    module: reportcollector.feeds.rss.RSSIndefiniteFeed
     distribution: public
     site: "https://www.malware.news/"
     feed_url: "https://malware.news/c/malwareanalysis.rss"
   
   - publisher: MalwareNews-news
     source: reporting
-    module: reportcollector.feeds.rss.RSSFeed
+    module: reportcollector.feeds.rss.RSSIndefiniteFeed
     distribution: public
     site: "https://www.malware.news/"
     feed_url: "https://malware.news/c/news.rss"
