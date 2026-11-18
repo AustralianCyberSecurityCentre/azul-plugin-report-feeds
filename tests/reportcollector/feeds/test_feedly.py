@@ -196,6 +196,31 @@ def test_fetch_continuation(httpserver: HTTPServer, feedly_response: bytes):
     assert 10 == found_reports
 
 
+def test_fetch_oldest_first(httpserver: HTTPServer, feedly_empty_response: bytes):
+    """Test reports are requested oldest first and not before they are old enough to be complete.
+
+    Newest first leaves the oldest report as the last fetch timestamp, causing duplicate reports on the next run.
+    """
+    httpserver.expect_request(
+        "/v3/streams/contents", query_string=FeedlyQueryMatcher("ranked", "oldest", False)
+    ).respond_with_data(response_data=feedly_empty_response)
+    feed_settings = base_feed.ReportFeedOptions.Feed(
+        publisher="Test",
+        distribution="public",
+        source="reporting",
+        site="test",
+        feed_url=httpserver.url_for("/v3/streams/contents"),
+        module="",
+        older_than_days=1,
+    )
+    p = feedly.JsonFeedly(feed_settings, COMMON_GLOBAL_OPTIONS)
+
+    assert list(p.fetch(last_fetch=None)) == []
+    newest_allowed_ms = int((datetime.now(tz=pendulum.UTC) - timedelta(days=1)).timestamp() * 1000)
+    request, _ = httpserver.log[0]
+    assert int(request.args["olderThan"]) <= newest_allowed_ms
+
+
 def _base_status_code_error(httpserver: HTTPServer, status_code: int):
     """Base case for testing status code failures"""
     max_days_feed_old = 90

@@ -38,3 +38,17 @@ class ReportStateTests(unittest.TestCase):
             state_load = ReportState(state_dir)
             for d in data:
                 self.assertEqual(d[1], state_load.checkForFeedLastTimestamp(d[0]))
+
+    def test_seen_reports(self):
+        """Test marking reports as seen and loading them again."""
+        with TemporaryDirectory() as state_dir:
+            state = ReportState(state_dir)
+            self.assertFalse(state.checkForSeenReport("https://example.com/blog/report"))
+            state.setSeenReport("https://example.com/blog/report")
+            self.assertTrue(state.checkForSeenReport("https://example.com/blog/report"))
+            # Different links to the same report are treated as the same report.
+            self.assertTrue(state.checkForSeenReport("https://EXAMPLE.com/blog/report/#section"))
+            self.assertFalse(state.checkForSeenReport("https://example.com/blog/other-report"))
+
+            state_load = ReportState(state_dir)
+            self.assertTrue(state_load.checkForSeenReport("https://example.com/blog/report"))
