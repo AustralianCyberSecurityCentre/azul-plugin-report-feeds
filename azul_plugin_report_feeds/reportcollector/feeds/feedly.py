@@ -129,7 +129,7 @@ class JsonFeedly(BaseFeed):
             last_fetch = datetime.now(tz=pendulum.UTC)
             last_fetch = last_fetch - timedelta(days=self.max_days_to_go_back)
 
-        closest_fetch = datetime.now(tz=pendulum.UTC) - timedelta(days=-self.older_than_days)
+        closest_fetch = datetime.now(tz=pendulum.UTC) - timedelta(days=self.older_than_days)
 
         time_since_in_ms = int(last_fetch.timestamp() * 1000)
         closest_fetch_in_ms = int(closest_fetch.timestamp() * 1000)
@@ -141,10 +141,12 @@ class JsonFeedly(BaseFeed):
         continuation = True
         while continuation:
             with httpx.Client(headers=headers) as web_client:
+                # Feedly defaults to newest first, which leaves the oldest report as the last fetch timestamp so
+                # every run would fetch the same reports again.
                 fetch_url = (
                     self.feedly_url
                     + self.feedly_url_encoded_stream_id
-                    + f"&count=20&newerThan={time_since_in_ms}&olderThan={closest_fetch_in_ms}"
+                    + f"&count=20&ranked=oldest&newerThan={time_since_in_ms}&olderThan={closest_fetch_in_ms}"
                 )
                 if isinstance(continuation, str):
                     fetch_url = fetch_url + f"&continuation={continuation}"

@@ -1,11 +1,13 @@
 """Shared utility functions for reportcollector modules."""
 
+import json
 import os
 import os.path
 import subprocess
 from datetime import datetime
 from pathlib import Path
 from typing import AsyncIterable, Iterable  # noqa: S404 # nosec B404
+from urllib.parse import urlsplit, urlunsplit
 
 import httpx
 import pendulum
@@ -113,6 +115,9 @@ class ReportState:
     An abstraction around getting and setting state for feeds.
     """
 
+    # Shared by all feeds, aggregators can link to the same report as the original publisher.
+    SEEN_REPORTS_FILE = ".seen_reports.json"
+
     def __init__(self, state_directory: str) -> None:
         """Class used to check, get and update report state.
 
@@ -126,6 +131,12 @@ class ReportState:
         except OSError as e:
             if not self.state_dir.exists():
                 raise Exception(f"Unable to create {state_directory=}") from e
+
+        self.seen_reports: dict[str, str] = dict()
+        seen_file = self.state_dir.joinpath(self.SEEN_REPORTS_FILE)
+        if seen_file.is_file() and not seen_file.is_symlink():
+            with seen_file.open() as state:
+                self.seen_reports = json.load(state)
 
     def checkForFeedLastTimestamp(self, feed_publisher: str) -> None | DateTime:
         """Given a feed publisher, check for last timestamp.
@@ -166,3 +177,28 @@ class ReportState:
 
         with state_file.open("w") as state:
             state.write(newest_timestamp.to_iso8601_string())
+
+    @staticmethod
+    def _normaliseReportUrl(url: str) -> str:
+        """Reduce a report url to a form that is the same for each link to the same report."""
+        parts = urlsplit(url.strip())
+        return urlunsplit((parts.scheme.lower(), parts.netloc.lower(), parts.path.rstrip("/"), parts.query, ""))
+
+    def checkForSeenReport(self, url: str) -> bool:
+        """Check if a report has already been processed by any feed.
+
+        @param url: The url of the report.
+        """
+        return self._normaliseReportUrl(url) in self.seen_reports
+
+    def setSeenReport(self, url: str):
+        """Save a report as processed so it isn't processed again.
+
+        @param url: The url of the report.
+
+        throws OSError or child of on failure to write state file.
+        """
+        self.seen_reports[self._normaliseReportUrl(url)] = pendulum.now(pendulum.UTC).to_iso8601_string()
+
+        with self.state_dir.joinpath(self.SEEN_REPORTS_FILE).open("w") as state:
+            json.dump(self.seen_reports, state)

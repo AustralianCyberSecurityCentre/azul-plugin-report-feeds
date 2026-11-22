@@ -368,7 +368,15 @@ class AzulPluginReportFeeds(Plugin):
                     fetched = True
                     if report_info.timestamp:
                         self.state.setFeedLastTimestamp(feed.publisher, report_info.timestamp)
+                    # Some feeds set the url to the site rather than the report so it can't identify the report.
+                    report_url = report_info.url if report_info.url != report_info.site else None
+                    if report_url and self.state.checkForSeenReport(report_url):
+                        logger.info(f"Skipping {feed.publisher=} report {report_url} as it was already processed")
+                        fetched = False
+                        continue
                     metrics = self.process_report(report_info)
+                    if report_url:
+                        self.state.setSeenReport(report_url)
                     self._capture_feed_metrics(feed, metrics)
                     # Set fetched back to false after processing is done.
                     fetched = False
