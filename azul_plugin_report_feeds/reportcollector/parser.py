@@ -220,7 +220,7 @@ class HTMLParser:
             # if using get_text it will strip all formatting including <br/>
             # which can run hashes into each other on same sites/pages, so
             # ensure we give a whitespace separator to join with...
-            return self.bs.body.get_text("\n")  # ty: ignore[unresolved-attribute]
+            return self.bs.body.get_text("\n")  # ty: ignore[missing-attribute]
         except AttributeError:
             return ""
 

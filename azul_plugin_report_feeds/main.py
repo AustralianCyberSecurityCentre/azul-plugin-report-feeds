@@ -107,7 +107,7 @@ class AzulPluginReportFeeds(Plugin):
     def _get_report_info(self, content: bytes) -> azm.Datastream:
         """Convert the raw contents of a pdf report into a Datastream object ready to add as an augmented stream."""
         label = DataLabel.REPORT
-        file_info = self.dp.submit_binary(self.cfg.feed_source_name, label, content)  # ty: ignore[unresolved-attribute] ty doesn't understand add_settings
+        file_info = self.dp.submit_binary(self.cfg.feed_source_name, label, content)  # ty: ignore[missing-attribute] ty doesn't understand add_settings
         file_info.label = label  # Dispatcher doesn't set label
         return file_info
 
@@ -160,9 +160,9 @@ class AzulPluginReportFeeds(Plugin):
             include=set(["publisher", "distribution", "slug", "site", "url", "report_id"]), exclude_none=True
         )
 
-        if len(self.cfg.ref_key_to_report_result_key) > 0:  # ty: ignore[unresolved-attribute] ty doesn't understand add_settings
+        if len(self.cfg.ref_key_to_report_result_key) > 0:  # ty: ignore[missing-attribute] ty doesn't understand add_settings
             dumped_model = report.model_dump()
-            for ref_key, report_key in self.cfg.ref_key_to_report_result_key.items():  # ty: ignore[unresolved-attribute] ty doesn't understand add_settings
+            for ref_key, report_key in self.cfg.ref_key_to_report_result_key.items():  # ty: ignore[missing-attribute] ty doesn't understand add_settings
                 try:
                     val = dumped_model[report_key]
                     report_refs[ref_key] = val
@@ -197,13 +197,13 @@ class AzulPluginReportFeeds(Plugin):
             event = self._gen_indicator_event(report.publisher, indicator, common_features, report_data, report_refs)
             mapped_events.append(event)
 
-            if len(download_events) < self.cfg.max_downloads_per_report:  # ty: ignore[unresolved-attribute] ty doesn't understand add_settings
+            if len(download_events) < self.cfg.max_downloads_per_report:  # ty: ignore[missing-attribute] ty doesn't understand add_settings
                 download_events.append(self._gen_download_event(report, indicator, report_refs))
 
         sourced_events: list[azm.BinaryEvent] = []
         # Child malware samples if there are any.
         for file_content in report.files:
-            file_info = self.dp.submit_binary(self.cfg.feed_source_name, DataLabel.CONTENT, file_content)  # ty: ignore[unresolved-attribute] ty doesn't understand add_settings
+            file_info = self.dp.submit_binary(self.cfg.feed_source_name, DataLabel.CONTENT, file_content)  # ty: ignore[missing-attribute] ty doesn't understand add_settings
             file_info.label = DataLabel.CONTENT  # Dispatcher doesn't set label
             as_entity = file_info.to_input_entity()
             as_entity.datastreams = report_data
@@ -296,7 +296,7 @@ class AzulPluginReportFeeds(Plugin):
             author=current_publisher,
             entity=entity,
             source=azm.Source(
-                name=self.cfg.feed_source_name,  # ty: ignore[unresolved-attribute] ty doesn't understand add_settings
+                name=self.cfg.feed_source_name,  # ty: ignore[missing-attribute] ty doesn't understand add_settings
                 timestamp=timestamp,
                 references=references,
                 path=[
@@ -308,7 +308,7 @@ class AzulPluginReportFeeds(Plugin):
                         filename=filename,
                     )
                 ],
-                security=self.cfg.feed_security,  # ty: ignore[unresolved-attribute] ty doesn't understand add_settings
+                security=self.cfg.feed_security,  # ty: ignore[missing-attribute] ty doesn't understand add_settings
             ),
         )
 
@@ -325,7 +325,7 @@ class AzulPluginReportFeeds(Plugin):
             hash=indicator.sha256,
             pcap=True,
             category=report.slug,
-            category_quota=self.cfg.max_downloads_per_report,  # ty: ignore[unresolved-attribute] ty doesn't understand add_settings
+            category_quota=self.cfg.max_downloads_per_report,  # ty: ignore[missing-attribute] ty doesn't understand add_settings
         )
 
         return azm.DownloadEvent(
@@ -337,11 +337,11 @@ class AzulPluginReportFeeds(Plugin):
             author=self.author,
             entity=entity,
             source=azm.Source(
-                name=self.cfg.feed_source_name,  # ty: ignore[unresolved-attribute] ty doesn't understand add_settings
+                name=self.cfg.feed_source_name,  # ty: ignore[missing-attribute] ty doesn't understand add_settings
                 timestamp=timestamp,
                 references=references,
                 path=[],
-                security=self.cfg.feed_security,  # ty: ignore[unresolved-attribute] ty doesn't understand add_settings
+                security=self.cfg.feed_security,  # ty: ignore[missing-attribute] ty doesn't understand add_settings
             ),
         )
 
@@ -435,13 +435,13 @@ class AzulPluginReportFeeds(Plugin):
 
     def _load_metric_handlers(self):
         """Create all of the metric handlers ready to capture metrics."""
-        push_gateway = self.cfg.prometheus_push_gateway  # ty: ignore[unresolved-attribute] ty doesn't understand add_settings
+        push_gateway = self.cfg.prometheus_push_gateway  # ty: ignore[missing-attribute] ty doesn't understand add_settings
         if not push_gateway:
             self.logger.info("Prometheus metrics are not being collected.")
         else:
             self.metrics_enabled = True
             self.gateway = push_gateway
-            self.job_name = self.NAME + self.cfg.namespace_suffix  # ty: ignore[unresolved-attribute] ty doesn't understand add_settings
+            self.job_name = self.NAME + self.cfg.namespace_suffix  # ty: ignore[missing-attribute] ty doesn't understand add_settings
 
         self.registry = CollectorRegistry()
         # Setup all metrics and point them to the appropriate registry.
@@ -491,7 +491,7 @@ class AzulPluginReportFeeds(Plugin):
 
     def run_once(self):
         """Run all of the configured feeds once."""
-        state_dir = self.cfg.state_directory  # ty: ignore[unresolved-attribute] ty doesn't understand add_settings
+        state_dir = self.cfg.state_directory  # ty: ignore[missing-attribute] ty doesn't understand add_settings
         self.state = ReportState(state_dir)
 
         start_time = time.time()
