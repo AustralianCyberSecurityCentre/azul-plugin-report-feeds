@@ -122,7 +122,7 @@ class RSSFeed(BaseFeed):
                         logger.warning("Broken Link? %s", str(ex))
 
         if indicators and pdf:
-            return pdf, indicators  # ty: ignore[invalid-return-type] ty is confused by the `content`'s type, and frankly I am too.
+            return pdf, indicators  # ty: ignore[invalid-explicit-return] ty is confused by the `content`'s type, and frankly I am too.
 
     def listing(self):
         """Retrieve the full available RSS listing.
